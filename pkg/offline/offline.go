@@ -87,12 +87,12 @@ func WithQueue(filepath string) heartbeat.HandleOption {
 }
 
 // QueueFilepath returns the path for offline queue db file. If
-// the waka's resource directory cannot be detected, it defaults to the
+// the resource directory cannot be detected, it defaults to the
 // current directory.
 func QueueFilepath() (string, error) {
 	folder, err := ini.WakaResourcesDir()
 	if err != nil {
-		return dbFilename, fmt.Errorf("failed getting waka's resource directory, defaulting to current directory: %s", err)
+		return dbFilename, fmt.Errorf("failed getting resource directory, defaulting to current directory: %s", err)
 	}
 
 	return filepath.Join(folder, dbFilename), nil
