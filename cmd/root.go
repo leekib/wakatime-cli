@@ -1,9 +1,12 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
+	"os"
 
 	"github.com/wakatime/wakatime-cli/pkg/api"
+	"github.com/wakatime/wakatime-cli/pkg/exitcode"
 	"github.com/wakatime/wakatime-cli/pkg/offline"
 
 	log "github.com/sirupsen/logrus"
@@ -25,8 +28,20 @@ func NewRootCMD() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "wakatime-cli",
 		Short: "Command line interface used by all WakaTime text editor plugins.",
-		Run: func(cmd *cobra.Command, _ []string) {
-			Run(cmd, v)
+		RunE: func(cmd *cobra.Command, _ []string) error {
+			if err := RunE(cmd, v); err != nil {
+				var errexitcode exitcode.Err
+
+				if errors.As(err, &errexitcode) {
+					os.Exit(errexitcode.Code)
+				}
+
+				os.Exit(exitcode.ErrGeneric)
+			}
+
+			os.Exit(exitcode.Success)
+
+			return nil
 		},
 	}
 
