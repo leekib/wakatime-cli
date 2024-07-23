@@ -132,12 +132,6 @@ func RunE(cmd *cobra.Command, v *viper.Viper) error {
 	if v.IsSet("entity") {
 		log.Debugln("command: heartbeat")
 
-		if v.GetBool("offline-only") {
-			exitCode := saveHeartbeats(v)
-
-			os.Exit(exitCode) // nolint:gocritic
-		}
-
 		return RunCmdWithOfflineSync(v, logFileParams.Verbose, logFileParams.SendDiagsOnErrors, cmdheartbeat.Run)
 	}
 
