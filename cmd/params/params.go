@@ -131,9 +131,11 @@ type (
 	// Offline contains offline related parameters.
 	Offline struct {
 		Disabled        bool
+		LastSentAt      time.Time
 		PrintMax        int
 		QueueFile       string
 		QueueFileLegacy string
+		RateLimit       time.Duration
 		SyncMax         int
 	}
 
@@ -647,6 +649,13 @@ func LoadOfflineParams(v *viper.Viper) Offline {
 		disabled = !b
 	}
 
+	rateLimit, _ := vipertools.FirstNonEmptyInt(v, "heartbeat-rate-limit-seconds", "settings.heartbeat_rate_limit_seconds")
+	if rateLimit < 0 {
+		log.Warnf("argument --heartbeat-rate-limit-seconds must be zero or a positive integer number, got %d", rateLimit)
+
+		rateLimit = 0
+	}
+
 	syncMax := v.GetInt("sync-offline-activity")
 	if syncMax < 0 {
 		log.Warnf("argument --sync-offline-activity must be zero or a positive integer number, got %d", syncMax)
@@ -654,11 +663,25 @@ func LoadOfflineParams(v *viper.Viper) Offline {
 		syncMax = 0
 	}
 
+	var lastSentAt time.Time
+
+	lastSentAtStr := vipertools.GetString(v, "internal.heartbeats_last_sent_at")
+	if lastSentAtStr != "" {
+		parsed, err := time.Parse(ini.DateFormat, lastSentAtStr)
+		if err != nil {
+			log.Warnf("failed to parse heartbeats_last_sent_at: %s", err)
+		} else {
+			lastSentAt = parsed
+		}
+	}
+
 	return Offline{
 		Disabled:        disabled,
+		LastSentAt:      lastSentAt,
 		PrintMax:        v.GetInt("print-offline-heartbeats"),
 		QueueFile:       vipertools.GetString(v, "offline-queue-file"),
 		QueueFileLegacy: vipertools.GetString(v, "offline-queue-file-legacy"),
+		RateLimit:       time.Duration(rateLimit) * time.Second,
 		SyncMax:         syncMax,
 	}
 }
@@ -1038,12 +1061,20 @@ func (p Heartbeat) String() string {
 
 // String implements fmt.Stringer interface.
 func (p Offline) String() string {
+	var lastSentAt string
+	if !p.LastSentAt.IsZero() {
+		lastSentAt = p.LastSentAt.Format(ini.DateFormat)
+	}
+
 	return fmt.Sprintf(
-		"disabled: %t, print max: %d, queue file: '%s', queue file legacy: '%s', num sync max: %d",
+		"disabled: %t, last sent at: '%s', print max: %d, queue file: '%s', queue file legacy: '%s',"+
+			" num rate limit: %d, num sync max: %d",
 		p.Disabled,
+		lastSentAt,
 		p.PrintMax,
 		p.QueueFile,
 		p.QueueFileLegacy,
+		p.RateLimit,
 		p.SyncMax,
 	)
 }
