@@ -751,10 +751,12 @@ func readAPIKeyFromCommand(cmdStr string) (string, error) {
 }
 
 var extraHeartbeatsCache *[]heartbeat.Heartbeat // nolint:gochecknoglobals
-var once sync.Once                              // nolint:gochecknoglobals
+
+// Once prevents reading from stdin twice.
+var Once sync.Once // nolint:gochecknoglobals
 
 func readExtraHeartbeats() []heartbeat.Heartbeat {
-	once.Do(func() {
+	Once.Do(func() {
 		in := bufio.NewReader(os.Stdin)
 
 		input, err := in.ReadString('\n')
