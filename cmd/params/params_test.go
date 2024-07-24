@@ -28,7 +28,7 @@ import (
 	"gopkg.in/ini.v1"
 )
 
-func TestLoadParams_AlternateProject(t *testing.T) {
+func TestLoadHeartbeatParams_AlternateProject(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("alternate-project", "web")
@@ -39,7 +39,7 @@ func TestLoadParams_AlternateProject(t *testing.T) {
 	assert.Equal(t, "web", params.Project.Alternate)
 }
 
-func TestLoadParams_AlternateProject_Unset(t *testing.T) {
+func TestLoadHeartbeatParams_AlternateProject_Unset(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 
@@ -49,7 +49,7 @@ func TestLoadParams_AlternateProject_Unset(t *testing.T) {
 	assert.Empty(t, params.Project.Alternate)
 }
 
-func TestLoadParams_Category(t *testing.T) {
+func TestLoadHeartbeatParams_Category(t *testing.T) {
 	tests := map[string]heartbeat.Category{
 		"advising":       heartbeat.AdvisingCategory,
 		"browsing":       heartbeat.BrowsingCategory,
@@ -85,7 +85,7 @@ func TestLoadParams_Category(t *testing.T) {
 	}
 }
 
-func TestLoadParams_Category_Default(t *testing.T) {
+func TestLoadHeartbeatParams_Category_Default(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 
@@ -95,7 +95,7 @@ func TestLoadParams_Category_Default(t *testing.T) {
 	assert.Equal(t, heartbeat.CodingCategory, params.Category)
 }
 
-func TestLoadParams_Category_Invalid(t *testing.T) {
+func TestLoadHeartbeatParams_Category_Invalid(t *testing.T) {
 	v := viper.New()
 	v.SetDefault("sync-offline-activity", 1000)
 	v.Set("category", "invalid")
@@ -106,7 +106,7 @@ func TestLoadParams_Category_Invalid(t *testing.T) {
 	assert.Equal(t, "failed to parse category: invalid category \"invalid\"", err.Error())
 }
 
-func TestLoadParams_CursorPosition(t *testing.T) {
+func TestLoadHeartbeatParams_CursorPosition(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("cursorpos", 42)
@@ -117,7 +117,7 @@ func TestLoadParams_CursorPosition(t *testing.T) {
 	assert.Equal(t, 42, *params.CursorPosition)
 }
 
-func TestLoadParams_CursorPosition_Zero(t *testing.T) {
+func TestLoadHeartbeatParams_CursorPosition_Zero(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("cursorpos", 0)
@@ -128,7 +128,7 @@ func TestLoadParams_CursorPosition_Zero(t *testing.T) {
 	assert.Zero(t, *params.CursorPosition)
 }
 
-func TestLoadParams_CursorPosition_Unset(t *testing.T) {
+func TestLoadHeartbeatParams_CursorPosition_Unset(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
@@ -139,7 +139,7 @@ func TestLoadParams_CursorPosition_Unset(t *testing.T) {
 	assert.Nil(t, params.CursorPosition)
 }
 
-func TestLoadParams_Entity_EntityFlagTakesPrecedence(t *testing.T) {
+func TestLoadHeartbeatParams_Entity_EntityFlagTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("file", "ignored")
@@ -150,7 +150,7 @@ func TestLoadParams_Entity_EntityFlagTakesPrecedence(t *testing.T) {
 	assert.Equal(t, "/path/to/file", params.Entity)
 }
 
-func TestLoadParams_Entity_FileFlag(t *testing.T) {
+func TestLoadHeartbeatParams_Entity_FileFlag(t *testing.T) {
 	v := viper.New()
 	v.Set("file", "~/path/to/file")
 
@@ -163,7 +163,7 @@ func TestLoadParams_Entity_FileFlag(t *testing.T) {
 	assert.Equal(t, filepath.Join(home, "/path/to/file"), params.Entity)
 }
 
-func TestLoadParams_Entity_Unset(t *testing.T) {
+func TestLoadHeartbeatParams_Entity_Unset(t *testing.T) {
 	v := viper.New()
 
 	_, err := paramscmd.LoadHeartbeatParams(v)
@@ -172,7 +172,7 @@ func TestLoadParams_Entity_Unset(t *testing.T) {
 	assert.Equal(t, "failed to retrieve entity", err.Error())
 }
 
-func TestLoadParams_EntityType(t *testing.T) {
+func TestLoadHeartbeatParams_EntityType(t *testing.T) {
 	tests := map[string]heartbeat.EntityType{
 		"file":   heartbeat.FileType,
 		"domain": heartbeat.DomainType,
@@ -193,7 +193,7 @@ func TestLoadParams_EntityType(t *testing.T) {
 	}
 }
 
-func TestLoadParams_EntityType_Default(t *testing.T) {
+func TestLoadHeartbeatParams_EntityType_Default(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 
@@ -203,7 +203,7 @@ func TestLoadParams_EntityType_Default(t *testing.T) {
 	assert.Equal(t, heartbeat.FileType, params.EntityType)
 }
 
-func TestLoadParams_EntityType_Invalid(t *testing.T) {
+func TestLoadHeartbeatParams_EntityType_Invalid(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("entity-type", "invalid")
@@ -217,7 +217,7 @@ func TestLoadParams_EntityType_Invalid(t *testing.T) {
 		err.Error())
 }
 
-func TestLoadParams_ExtraHeartbeats(t *testing.T) {
+func TestLoadHeartbeatParams_ExtraHeartbeats(t *testing.T) {
 	r, w, err := os.Pipe()
 	require.NoError(t, err)
 
@@ -289,7 +289,7 @@ func TestLoadParams_ExtraHeartbeats(t *testing.T) {
 	}, params.ExtraHeartbeats)
 }
 
-func TestLoadParams_ExtraHeartbeats_WithStringValues(t *testing.T) {
+func TestLoadHeartbeatParams_ExtraHeartbeats_WithStringValues(t *testing.T) {
 	r, w, err := os.Pipe()
 	require.NoError(t, err)
 
@@ -356,7 +356,7 @@ func TestLoadParams_ExtraHeartbeats_WithStringValues(t *testing.T) {
 	}, params.ExtraHeartbeats)
 }
 
-func TestLoadParams_ExtraHeartbeats_WithEOF(t *testing.T) {
+func TestLoadHeartbeatParams_ExtraHeartbeats_WithEOF(t *testing.T) {
 	r, w, err := os.Pipe()
 	require.NoError(t, err)
 
@@ -429,7 +429,7 @@ func TestLoadParams_ExtraHeartbeats_WithEOF(t *testing.T) {
 	}, params.ExtraHeartbeats)
 }
 
-func TestLoadParams_ExtraHeartbeats_NoData(t *testing.T) {
+func TestLoadHeartbeatParams_ExtraHeartbeats_NoData(t *testing.T) {
 	r, w, err := os.Pipe()
 	require.NoError(t, err)
 
@@ -502,7 +502,7 @@ func TestLoadHeartbeat_GuessLanguage_Default(t *testing.T) {
 	assert.False(t, params.GuessLanguage)
 }
 
-func TestLoadParams_IsUnsavedEntity(t *testing.T) {
+func TestLoadHeartbeatParams_IsUnsavedEntity(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("is-unsaved-entity", true)
@@ -513,7 +513,7 @@ func TestLoadParams_IsUnsavedEntity(t *testing.T) {
 	assert.True(t, params.IsUnsavedEntity)
 }
 
-func TestLoadParams_IsWrite(t *testing.T) {
+func TestLoadHeartbeatParams_IsWrite(t *testing.T) {
 	tests := map[string]bool{
 		"is write":    true,
 		"is no write": false,
@@ -533,7 +533,7 @@ func TestLoadParams_IsWrite(t *testing.T) {
 	}
 }
 
-func TestLoadParams_IsWrite_Unset(t *testing.T) {
+func TestLoadHeartbeatParams_IsWrite_Unset(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 
@@ -543,7 +543,7 @@ func TestLoadParams_IsWrite_Unset(t *testing.T) {
 	assert.Nil(t, params.IsWrite)
 }
 
-func TestLoadParams_Language(t *testing.T) {
+func TestLoadHeartbeatParams_Language(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("language", "Go")
@@ -554,7 +554,7 @@ func TestLoadParams_Language(t *testing.T) {
 	assert.Equal(t, heartbeat.LanguageGo.String(), *params.Language)
 }
 
-func TestLoadParams_LanguageAlternate(t *testing.T) {
+func TestLoadHeartbeatParams_LanguageAlternate(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("alternate-language", "Go")
@@ -566,7 +566,7 @@ func TestLoadParams_LanguageAlternate(t *testing.T) {
 	assert.Nil(t, params.Language)
 }
 
-func TestLoadParams_LineNumber(t *testing.T) {
+func TestLoadHeartbeatParams_LineNumber(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("lineno", 42)
@@ -577,7 +577,7 @@ func TestLoadParams_LineNumber(t *testing.T) {
 	assert.Equal(t, 42, *params.LineNumber)
 }
 
-func TestLoadParams_LineNumber_Zero(t *testing.T) {
+func TestLoadHeartbeatParams_LineNumber_Zero(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("lineno", 0)
@@ -588,7 +588,7 @@ func TestLoadParams_LineNumber_Zero(t *testing.T) {
 	assert.Zero(t, *params.LineNumber)
 }
 
-func TestLoadParams_LineNumber_Unset(t *testing.T) {
+func TestLoadHeartbeatParams_LineNumber_Unset(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 
@@ -598,7 +598,7 @@ func TestLoadParams_LineNumber_Unset(t *testing.T) {
 	assert.Nil(t, params.LineNumber)
 }
 
-func TestLoadParams_LocalFile(t *testing.T) {
+func TestLoadHeartbeatParams_LocalFile(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("local-file", "/path/to/file")
@@ -609,7 +609,7 @@ func TestLoadParams_LocalFile(t *testing.T) {
 	assert.Equal(t, "/path/to/file", params.LocalFile)
 }
 
-func TestLoadParams_Project(t *testing.T) {
+func TestLoadHeartbeatParams_Project(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("project", "billing")
@@ -620,7 +620,7 @@ func TestLoadParams_Project(t *testing.T) {
 	assert.Equal(t, "billing", params.Project.Override)
 }
 
-func TestLoadParams_Project_Unset(t *testing.T) {
+func TestLoadHeartbeatParams_Project_Unset(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 
@@ -630,7 +630,7 @@ func TestLoadParams_Project_Unset(t *testing.T) {
 	assert.Empty(t, params.Project.Override)
 }
 
-func TestLoadParams_ProjectMap(t *testing.T) {
+func TestLoadHeartbeatParams_ProjectMap(t *testing.T) {
 	tests := map[string]struct {
 		Entity   string
 		Regex    regex.Regex
@@ -675,7 +675,7 @@ func TestLoadParams_ProjectMap(t *testing.T) {
 	}
 }
 
-func TestLoadParams_ProjectApiKey(t *testing.T) {
+func TestLoadAPIParams_ProjectApiKey(t *testing.T) {
 	tests := map[string]struct {
 		Entity   string
 		Regex    regex.Regex
@@ -733,7 +733,7 @@ func TestLoadParams_ProjectApiKey(t *testing.T) {
 	}
 }
 
-func TestLoadParams_ProjectApiKey_ParseConfig(t *testing.T) {
+func TestLoadAPIParams_ProjectApiKey_ParseConfig(t *testing.T) {
 	v := viper.New()
 	v.Set("config", "testdata/.wakatime.cfg")
 	v.Set("entity", "testdata/heartbeat_go.json")
@@ -757,7 +757,15 @@ func TestLoadParams_ProjectApiKey_ParseConfig(t *testing.T) {
 	assert.Equal(t, expected, params.KeyPatterns)
 }
 
-func TestLoadParams_Time(t *testing.T) {
+func TestLoadAPIParams_APIKeyPrefixSupported(t *testing.T) {
+	v := viper.New()
+	v.Set("key", "waka_00000000-0000-4000-8000-000000000000")
+
+	_, err := paramscmd.LoadAPIParams(v)
+	require.NoError(t, err)
+}
+
+func TestLoadHeartbeatParams_Time(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("time", 1590609206.1)
@@ -768,7 +776,7 @@ func TestLoadParams_Time(t *testing.T) {
 	assert.Equal(t, 1590609206.1, params.Time)
 }
 
-func TestLoadParams_Time_Default(t *testing.T) {
+func TestLoadHeartbeatParams_Time_Default(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 
@@ -780,7 +788,7 @@ func TestLoadParams_Time_Default(t *testing.T) {
 	assert.GreaterOrEqual(t, params.Time, now-60)
 }
 
-func TestLoadParams_Filter_Exclude(t *testing.T) {
+func TestLoadHeartbeatParams_Filter_Exclude(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("exclude", []string{".*", "wakatime.*"})
@@ -799,7 +807,7 @@ func TestLoadParams_Filter_Exclude(t *testing.T) {
 	assert.Equal(t, "(?i)wakatime.?", params.Filter.Exclude[5].String())
 }
 
-func TestLoadParams_Filter_Exclude_Multiline(t *testing.T) {
+func TestLoadHeartbeatParams_Filter_Exclude_Multiline(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("settings.ignore", "\t.?\n\twakatime.? \t\n")
@@ -812,7 +820,7 @@ func TestLoadParams_Filter_Exclude_Multiline(t *testing.T) {
 	assert.Equal(t, "(?i)wakatime.?", params.Filter.Exclude[1].String())
 }
 
-func TestLoadParams_Filter_Exclude_IgnoresInvalidRegex(t *testing.T) {
+func TestLoadHeartbeatParams_Filter_Exclude_IgnoresInvalidRegex(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("exclude", []string{".*", "["})
@@ -824,7 +832,7 @@ func TestLoadParams_Filter_Exclude_IgnoresInvalidRegex(t *testing.T) {
 	assert.Equal(t, "(?i).*", params.Filter.Exclude[0].String())
 }
 
-func TestLoadParams_Filter_Exclude_PerlRegexPatterns(t *testing.T) {
+func TestLoadHeartbeatParams_Filter_Exclude_PerlRegexPatterns(t *testing.T) {
 	tests := map[string]string{
 		"negative lookahead": `^/var/(?!www/).*`,
 		"positive lookahead": `^/var/(?=www/).*`,
@@ -845,7 +853,7 @@ func TestLoadParams_Filter_Exclude_PerlRegexPatterns(t *testing.T) {
 	}
 }
 
-func TestLoadParams_Filter_ExcludeUnknownProject(t *testing.T) {
+func TestLoadHeartbeatParams_Filter_ExcludeUnknownProject(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("exclude-unknown-project", true)
@@ -856,7 +864,7 @@ func TestLoadParams_Filter_ExcludeUnknownProject(t *testing.T) {
 	assert.True(t, params.Filter.ExcludeUnknownProject)
 }
 
-func TestLoadParams_Filter_ExcludeUnknownProject_FromConfig(t *testing.T) {
+func TestLoadHeartbeatParams_Filter_ExcludeUnknownProject_FromConfig(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("exclude-unknown-project", false)
@@ -868,7 +876,7 @@ func TestLoadParams_Filter_ExcludeUnknownProject_FromConfig(t *testing.T) {
 	assert.True(t, params.Filter.ExcludeUnknownProject)
 }
 
-func TestLoadParams_Filter_Include(t *testing.T) {
+func TestLoadHeartbeatParams_Filter_Include(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("include", []string{".*", "wakatime.*"})
@@ -884,7 +892,7 @@ func TestLoadParams_Filter_Include(t *testing.T) {
 	assert.Equal(t, "(?i)wakatime.+", params.Filter.Include[3].String())
 }
 
-func TestLoadParams_Filter_Include_IgnoresInvalidRegex(t *testing.T) {
+func TestLoadHeartbeatParams_Filter_Include_IgnoresInvalidRegex(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("include", []string{".*", "["})
@@ -896,7 +904,7 @@ func TestLoadParams_Filter_Include_IgnoresInvalidRegex(t *testing.T) {
 	assert.Equal(t, "(?i).*", params.Filter.Include[0].String())
 }
 
-func TestLoadParams_Filter_Include_PerlRegexPatterns(t *testing.T) {
+func TestLoadHeartbeatParams_Filter_Include_PerlRegexPatterns(t *testing.T) {
 	tests := map[string]string{
 		"negative lookahead": `^/var/(?!www/).*`,
 		"positive lookahead": `^/var/(?=www/).*`,
@@ -917,7 +925,7 @@ func TestLoadParams_Filter_Include_PerlRegexPatterns(t *testing.T) {
 	}
 }
 
-func TestLoadParams_Filter_IncludeOnlyWithProjectFile(t *testing.T) {
+func TestLoadHeartbeatParams_Filter_IncludeOnlyWithProjectFile(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("include-only-with-project-file", true)
@@ -928,7 +936,7 @@ func TestLoadParams_Filter_IncludeOnlyWithProjectFile(t *testing.T) {
 	assert.True(t, params.Filter.IncludeOnlyWithProjectFile)
 }
 
-func TestLoadParams_Filter_IncludeOnlyWithProjectFile_FromConfig(t *testing.T) {
+func TestLoadHeartbeatParams_Filter_IncludeOnlyWithProjectFile_FromConfig(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("include-only-with-project-file", false)
@@ -940,7 +948,7 @@ func TestLoadParams_Filter_IncludeOnlyWithProjectFile_FromConfig(t *testing.T) {
 	assert.True(t, params.Filter.IncludeOnlyWithProjectFile)
 }
 
-func TestLoadParams_SanitizeParams_HideBranchNames_True(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideBranchNames_True(t *testing.T) {
 	tests := map[string]string{
 		"lowercase":       "true",
 		"uppercase":       "TRUE",
@@ -963,7 +971,7 @@ func TestLoadParams_SanitizeParams_HideBranchNames_True(t *testing.T) {
 	}
 }
 
-func TestLoadParams_SanitizeParams_HideBranchNames_False(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideBranchNames_False(t *testing.T) {
 	tests := map[string]string{
 		"lowercase":       "false",
 		"uppercase":       "FALSE",
@@ -986,7 +994,7 @@ func TestLoadParams_SanitizeParams_HideBranchNames_False(t *testing.T) {
 	}
 }
 
-func TestLoadParams_SanitizeParams_HideBranchNames_List(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideBranchNames_List(t *testing.T) {
 	tests := map[string]struct {
 		ViperValue string
 		Expected   []regex.Regex
@@ -1022,7 +1030,7 @@ func TestLoadParams_SanitizeParams_HideBranchNames_List(t *testing.T) {
 	}
 }
 
-func TestLoadParams_SanitizeParams_HideBranchNames_FlagTakesPrecedence(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideBranchNames_FlagTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("hide-branch-names", true)
@@ -1038,7 +1046,7 @@ func TestLoadParams_SanitizeParams_HideBranchNames_FlagTakesPrecedence(t *testin
 	}, params.Sanitize)
 }
 
-func TestLoadParams_SanitizeParams_HideBranchNames_ConfigTakesPrecedence(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideBranchNames_ConfigTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("settings.hide_branch_names", "true")
@@ -1053,7 +1061,7 @@ func TestLoadParams_SanitizeParams_HideBranchNames_ConfigTakesPrecedence(t *test
 	}, params.Sanitize)
 }
 
-func TestLoadParams_SanitizeParams_HideBranchNames_ConfigDeprecatedOneTakesPrecedence(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideBranchNames_ConfigDeprecatedOneTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("settings.hide_branchnames", "true")
@@ -1067,7 +1075,7 @@ func TestLoadParams_SanitizeParams_HideBranchNames_ConfigDeprecatedOneTakesPrece
 	}, params.Sanitize)
 }
 
-func TestLoadParams_SanitizeParams_HideBranchNames_ConfigDeprecatedTwo(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideBranchNames_ConfigDeprecatedTwo(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("settings.hidebranchnames", "true")
@@ -1080,7 +1088,7 @@ func TestLoadParams_SanitizeParams_HideBranchNames_ConfigDeprecatedTwo(t *testin
 	}, params.Sanitize)
 }
 
-func TestLoadParams_SanitizeParams_HideBranchNames_InvalidRegex(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideBranchNames_InvalidRegex(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("hide-branch-names", ".*secret.*\n[0-9+")
@@ -1096,7 +1104,7 @@ func TestLoadParams_SanitizeParams_HideBranchNames_InvalidRegex(t *testing.T) {
 	))
 }
 
-func TestLoadParams_SanitizeParams_HideProjectNames_True(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideProjectNames_True(t *testing.T) {
 	tests := map[string]string{
 		"lowercase":       "true",
 		"uppercase":       "TRUE",
@@ -1119,7 +1127,7 @@ func TestLoadParams_SanitizeParams_HideProjectNames_True(t *testing.T) {
 	}
 }
 
-func TestLoadParams_SanitizeParams_HideProjectNames_False(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideProjectNames_False(t *testing.T) {
 	tests := map[string]string{
 		"lowercase":       "false",
 		"uppercase":       "FALSE",
@@ -1142,7 +1150,7 @@ func TestLoadParams_SanitizeParams_HideProjectNames_False(t *testing.T) {
 	}
 }
 
-func TestLoadParams_SanitizeParams_HideProjecthNames_List(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideProjecthNames_List(t *testing.T) {
 	tests := map[string]struct {
 		ViperValue string
 		Expected   []regex.Regex
@@ -1178,7 +1186,7 @@ func TestLoadParams_SanitizeParams_HideProjecthNames_List(t *testing.T) {
 	}
 }
 
-func TestLoadParams_SanitizeParams_HideProjectNames_FlagTakesPrecedence(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideProjectNames_FlagTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("hide-project-names", "true")
@@ -1194,7 +1202,7 @@ func TestLoadParams_SanitizeParams_HideProjectNames_FlagTakesPrecedence(t *testi
 	}, params.Sanitize)
 }
 
-func TestLoadParams_SanitizeParams_HideProjectNames_ConfigTakesPrecedence(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideProjectNames_ConfigTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("settings.hide_project_names", "true")
@@ -1209,7 +1217,7 @@ func TestLoadParams_SanitizeParams_HideProjectNames_ConfigTakesPrecedence(t *tes
 	}, params.Sanitize)
 }
 
-func TestLoadParams_SanitizeParams_HideProjectNames_ConfigDeprecatedOneTakesPrecedence(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideProjectNames_ConfigDeprecatedOneTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("settings.hide_projectnames", "true")
@@ -1223,7 +1231,7 @@ func TestLoadParams_SanitizeParams_HideProjectNames_ConfigDeprecatedOneTakesPrec
 	}, params.Sanitize)
 }
 
-func TestLoadParams_SanitizeParams_HideProjectNames_ConfigDeprecatedTwo(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideProjectNames_ConfigDeprecatedTwo(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("settings.hideprojectnames", "true")
@@ -1236,7 +1244,7 @@ func TestLoadParams_SanitizeParams_HideProjectNames_ConfigDeprecatedTwo(t *testi
 	}, params.Sanitize)
 }
 
-func TestLoadParams_SanitizeParams_HideProjectNames_InvalidRegex(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideProjectNames_InvalidRegex(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("hide-project-names", ".*secret.*\n[0-9+")
@@ -1252,7 +1260,7 @@ func TestLoadParams_SanitizeParams_HideProjectNames_InvalidRegex(t *testing.T) {
 	))
 }
 
-func TestLoadParams_SanitizeParams_HideFileNames_True(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideFileNames_True(t *testing.T) {
 	tests := map[string]string{
 		"lowercase":       "true",
 		"uppercase":       "TRUE",
@@ -1275,7 +1283,7 @@ func TestLoadParams_SanitizeParams_HideFileNames_True(t *testing.T) {
 	}
 }
 
-func TestLoadParams_SanitizeParams_HideFileNames_False(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideFileNames_False(t *testing.T) {
 	tests := map[string]string{
 		"lowercase":       "false",
 		"uppercase":       "FALSE",
@@ -1298,7 +1306,7 @@ func TestLoadParams_SanitizeParams_HideFileNames_False(t *testing.T) {
 	}
 }
 
-func TestLoadParams_SanitizeParams_HideFileNames_List(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideFileNames_List(t *testing.T) {
 	tests := map[string]struct {
 		ViperValue string
 		Expected   []regex.Regex
@@ -1334,7 +1342,7 @@ func TestLoadParams_SanitizeParams_HideFileNames_List(t *testing.T) {
 	}
 }
 
-func TestLoadParams_SanitizeParams_HideFileNames_FlagTakesPrecedence(t *testing.T) {
+func TestLoadheartbeatParams_SanitizeParams_HideFileNames_FlagTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("hide-file-names", "true")
@@ -1352,7 +1360,7 @@ func TestLoadParams_SanitizeParams_HideFileNames_FlagTakesPrecedence(t *testing.
 	}, params.Sanitize)
 }
 
-func TestLoadParams_SanitizeParams_HideFileNames_FlagDeprecatedOneTakesPrecedence(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideFileNames_FlagDeprecatedOneTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("hide-filenames", "true")
@@ -1369,7 +1377,7 @@ func TestLoadParams_SanitizeParams_HideFileNames_FlagDeprecatedOneTakesPrecedenc
 	}, params.Sanitize)
 }
 
-func TestLoadParams_SanitizeParams_HideFileNames_FlagDeprecatedTwoTakesPrecedence(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideFileNames_FlagDeprecatedTwoTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("hidefilenames", "true")
@@ -1385,7 +1393,7 @@ func TestLoadParams_SanitizeParams_HideFileNames_FlagDeprecatedTwoTakesPrecedenc
 	}, params.Sanitize)
 }
 
-func TestLoadParams_SanitizeParams_HideFileNames_ConfigTakesPrecedence(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideFileNames_ConfigTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("settings.hide_file_names", "true")
@@ -1400,7 +1408,7 @@ func TestLoadParams_SanitizeParams_HideFileNames_ConfigTakesPrecedence(t *testin
 	}, params.Sanitize)
 }
 
-func TestLoadParams_SanitizeParams_HideFileNames_ConfigDeprecatedOneTakesPrecedence(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideFileNames_ConfigDeprecatedOneTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("settings.hide_filenames", "true")
@@ -1414,7 +1422,7 @@ func TestLoadParams_SanitizeParams_HideFileNames_ConfigDeprecatedOneTakesPrecede
 	}, params.Sanitize)
 }
 
-func TestLoadParams_SanitizeParams_HideFileNames_ConfigDeprecatedTwo(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideFileNames_ConfigDeprecatedTwo(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("settings.hidefilenames", "true")
@@ -1427,7 +1435,7 @@ func TestLoadParams_SanitizeParams_HideFileNames_ConfigDeprecatedTwo(t *testing.
 	}, params.Sanitize)
 }
 
-func TestLoadParams_SanitizeParams_HideFileNames_InvalidRegex(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideFileNames_InvalidRegex(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("hide-file-names", ".*secret.*\n[0-9+")
@@ -1443,7 +1451,7 @@ func TestLoadParams_SanitizeParams_HideFileNames_InvalidRegex(t *testing.T) {
 	))
 }
 
-func TestLoadParams_SanitizeParams_HideProjectFolder(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideProjectFolder(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("hide-project-folder", true)
@@ -1456,7 +1464,7 @@ func TestLoadParams_SanitizeParams_HideProjectFolder(t *testing.T) {
 	}, params.Sanitize)
 }
 
-func TestLoadParams_SanitizeParams_HideProjectFolder_ConfigTakesPrecedence(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_HideProjectFolder_ConfigTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("settings.hide_project_folder", true)
@@ -1469,7 +1477,7 @@ func TestLoadParams_SanitizeParams_HideProjectFolder_ConfigTakesPrecedence(t *te
 	}, params.Sanitize)
 }
 
-func TestLoadParams_SanitizeParams_OverrideProjectPath(t *testing.T) {
+func TestLoadHeartbeatParams_SanitizeParams_OverrideProjectPath(t *testing.T) {
 	v := viper.New()
 	v.Set("entity", "/path/to/file")
 	v.Set("project-folder", "/custom-path")
@@ -1482,7 +1490,7 @@ func TestLoadParams_SanitizeParams_OverrideProjectPath(t *testing.T) {
 	}, params.Sanitize)
 }
 
-func TestLoadParams_SubmodulesDisabled_True(t *testing.T) {
+func TestLoadHeartbeatParams_SubmodulesDisabled_True(t *testing.T) {
 	tests := map[string]string{
 		"lowercase":       "true",
 		"uppercase":       "TRUE",
@@ -1503,7 +1511,7 @@ func TestLoadParams_SubmodulesDisabled_True(t *testing.T) {
 	}
 }
 
-func TestLoadParams_SubmodulesDisabled_False(t *testing.T) {
+func TestLoadHeartbeatParams_SubmodulesDisabled_False(t *testing.T) {
 	tests := map[string]string{
 		"lowercase":       "false",
 		"uppercase":       "FALSE",
@@ -1524,7 +1532,7 @@ func TestLoadParams_SubmodulesDisabled_False(t *testing.T) {
 	}
 }
 
-func TestLoadParams_SubmodulesDisabled_List(t *testing.T) {
+func TestLoadHeartbeatsParams_SubmodulesDisabled_List(t *testing.T) {
 	tests := map[string]struct {
 		ViperValue string
 		Expected   []regex.Regex
@@ -1559,7 +1567,7 @@ func TestLoadParams_SubmodulesDisabled_List(t *testing.T) {
 	}
 }
 
-func TestLoadParams_SubmoduleProjectMap(t *testing.T) {
+func TestLoadHeartbeatsParams_SubmoduleProjectMap(t *testing.T) {
 	tests := map[string]struct {
 		Entity   string
 		Regex    regex.Regex
@@ -1604,7 +1612,7 @@ func TestLoadParams_SubmoduleProjectMap(t *testing.T) {
 	}
 }
 
-func TestLoadParams_Plugin(t *testing.T) {
+func TestLoadAPIParams_Plugin(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 	v.Set("plugin", "plugin/10.0.0")
@@ -1615,7 +1623,7 @@ func TestLoadParams_Plugin(t *testing.T) {
 	assert.Equal(t, "plugin/10.0.0", params.Plugin)
 }
 
-func TestLoadParams_Plugin_Unset(t *testing.T) {
+func TestLoadAPIParams_Plugin_Unset(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 
@@ -1625,7 +1633,7 @@ func TestLoadParams_Plugin_Unset(t *testing.T) {
 	assert.Empty(t, params.Plugin)
 }
 
-func TestLoadParams_Timeout_FlagTakesPrecedence(t *testing.T) {
+func TestLoadAPIParams_Timeout_FlagTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 	v.Set("timeout", 5)
@@ -1637,7 +1645,7 @@ func TestLoadParams_Timeout_FlagTakesPrecedence(t *testing.T) {
 	assert.Equal(t, 5*time.Second, params.Timeout)
 }
 
-func TestLoadParams_Timeout_FromConfig(t *testing.T) {
+func TestLoadAPIParams_Timeout_FromConfig(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 	v.Set("settings.timeout", 10)
@@ -1648,7 +1656,7 @@ func TestLoadParams_Timeout_FromConfig(t *testing.T) {
 	assert.Equal(t, 10*time.Second, params.Timeout)
 }
 
-func TestLoad_OfflineDisabled_ConfigTakesPrecedence(t *testing.T) {
+func TestLoadOfflineParams_Disabled_ConfigTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("disable-offline", false)
 	v.Set("disableoffline", false)
@@ -1659,7 +1667,7 @@ func TestLoad_OfflineDisabled_ConfigTakesPrecedence(t *testing.T) {
 	assert.True(t, params.Disabled)
 }
 
-func TestLoad_OfflineDisabled_FlagDeprecatedTakesPrecedence(t *testing.T) {
+func TestLoadOfflineParams_Disabled_FlagDeprecatedTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("disable-offline", false)
 	v.Set("disableoffline", true)
@@ -1669,7 +1677,7 @@ func TestLoad_OfflineDisabled_FlagDeprecatedTakesPrecedence(t *testing.T) {
 	assert.True(t, params.Disabled)
 }
 
-func TestLoad_OfflineDisabled_FromFlag(t *testing.T) {
+func TestLoadOfflineParams_Disabled_FromFlag(t *testing.T) {
 	v := viper.New()
 	v.Set("disable-offline", true)
 
@@ -1678,7 +1686,83 @@ func TestLoad_OfflineDisabled_FromFlag(t *testing.T) {
 	assert.True(t, params.Disabled)
 }
 
-func TestLoad_OfflineQueueFile(t *testing.T) {
+func TestLoadOfflineParams_RateLimit_FlagTakesPrecedence(t *testing.T) {
+	v := viper.New()
+	v.Set("heartbeat-rate-limit-seconds", 5)
+	v.Set("settings.heartbeat_rate_limit_seconds", 10)
+
+	params := paramscmd.LoadOfflineParams(v)
+
+	assert.Equal(t, time.Duration(5)*time.Second, params.RateLimit)
+}
+
+func TestLoadOfflineParams_RateLimit_FromConfig(t *testing.T) {
+	v := viper.New()
+	v.Set("settings.heartbeat_rate_limit_seconds", 10)
+
+	params := paramscmd.LoadOfflineParams(v)
+
+	assert.Equal(t, time.Duration(10)*time.Second, params.RateLimit)
+}
+
+func TestLoadOfflineParams_RateLimit_Zero(t *testing.T) {
+	v := viper.New()
+	v.Set("heartbeat-rate-limit-seconds", "0")
+
+	params := paramscmd.LoadOfflineParams(v)
+
+	assert.Zero(t, params.RateLimit)
+}
+
+func TestLoadOfflineParams_RateLimit_Default(t *testing.T) {
+	v := viper.New()
+	v.SetDefault("heartbeat-rate-limit-seconds", 20)
+
+	params := paramscmd.LoadOfflineParams(v)
+
+	assert.Equal(t, time.Duration(20)*time.Second, params.RateLimit)
+}
+
+func TestLoadOfflineParams_RateLimit_NegativeNumber(t *testing.T) {
+	v := viper.New()
+	v.Set("heartbeat-rate-limit-seconds", -1)
+
+	params := paramscmd.LoadOfflineParams(v)
+
+	assert.Zero(t, params.RateLimit)
+}
+
+func TestLoadOfflineParams_RateLimit_NonIntegerValue(t *testing.T) {
+	v := viper.New()
+	v.Set("heartbeat-rate-limit-seconds", "invalid")
+
+	params := paramscmd.LoadOfflineParams(v)
+
+	assert.Zero(t, params.RateLimit)
+}
+
+func TestLoadOfflineParams_LastSentAt(t *testing.T) {
+	v := viper.New()
+	v.Set("internal.heartbeats_last_sent_at", "2021-08-30T18:50:42-03:00")
+
+	params := paramscmd.LoadOfflineParams(v)
+
+	lastSentAt, err := time.Parse(inipkg.DateFormat, "2021-08-30T18:50:42-03:00")
+	require.NoError(t, err)
+
+	assert.Equal(t, lastSentAt, params.LastSentAt)
+}
+
+func TestLoadOfflineParams_LastSentAt_Err(t *testing.T) {
+	v := viper.New()
+	v.Set("internal.heartbeats_last_sent_at", "2021-08-30")
+
+	params := paramscmd.LoadOfflineParams(v)
+
+	assert.Zero(t, params.LastSentAt)
+}
+
+func TestLoadOfflineParams_QueueFile(t *testing.T) {
 	v := viper.New()
 	v.Set("offline-queue-file", "/path/to/file")
 
@@ -1687,7 +1771,7 @@ func TestLoad_OfflineQueueFile(t *testing.T) {
 	assert.Equal(t, "/path/to/file", params.QueueFile)
 }
 
-func TestLoad_OfflineQueueFileLegacy(t *testing.T) {
+func TestLoadOfflineParams_QueueFileLegacy(t *testing.T) {
 	v := viper.New()
 	v.Set("offline-queue-file-legacy", "/path/to/file")
 
@@ -1696,7 +1780,7 @@ func TestLoad_OfflineQueueFileLegacy(t *testing.T) {
 	assert.Equal(t, "/path/to/file", params.QueueFileLegacy)
 }
 
-func TestLoad_OfflineSyncMax(t *testing.T) {
+func TestLoadOfflineParams_SyncMax(t *testing.T) {
 	v := viper.New()
 	v.Set("sync-offline-activity", 42)
 
@@ -1705,7 +1789,7 @@ func TestLoad_OfflineSyncMax(t *testing.T) {
 	assert.Equal(t, 42, params.SyncMax)
 }
 
-func TestLoad_OfflineSyncMax_Zero(t *testing.T) {
+func TestLoadOfflineParams_SyncMax_Zero(t *testing.T) {
 	v := viper.New()
 	v.Set("sync-offline-activity", "0")
 
@@ -1714,7 +1798,7 @@ func TestLoad_OfflineSyncMax_Zero(t *testing.T) {
 	assert.Zero(t, params.SyncMax)
 }
 
-func TestLoad_OfflineSyncMax_Default(t *testing.T) {
+func TestLoadOfflineParams_SyncMax_Default(t *testing.T) {
 	v := viper.New()
 	v.SetDefault("sync-offline-activity", 1000)
 
@@ -1723,25 +1807,25 @@ func TestLoad_OfflineSyncMax_Default(t *testing.T) {
 	assert.Equal(t, 1000, params.SyncMax)
 }
 
-func TestLoad_OfflineSyncMax_NegativeNumber(t *testing.T) {
+func TestLoadOfflineParams_SyncMax_NegativeNumber(t *testing.T) {
 	v := viper.New()
 	v.Set("sync-offline-activity", -1)
 
 	params := paramscmd.LoadOfflineParams(v)
 
-	assert.Equal(t, 0, params.SyncMax)
+	assert.Zero(t, params.SyncMax)
 }
 
-func TestLoad_OfflineSyncMax_NonIntegerValue(t *testing.T) {
+func TestLoadOfflineParams_SyncMax_NonIntegerValue(t *testing.T) {
 	v := viper.New()
 	v.Set("sync-offline-activity", "invalid")
 
 	params := paramscmd.LoadOfflineParams(v)
 
-	assert.Equal(t, 0, params.SyncMax)
+	assert.Zero(t, params.SyncMax)
 }
 
-func TestLoad_API_APIKey(t *testing.T) {
+func TestLoadAPIParams_APIKey(t *testing.T) {
 	tests := map[string]struct {
 		ViperAPIKey          string
 		ViperAPIKeyConfig    string
@@ -1793,7 +1877,7 @@ func TestLoad_API_APIKey(t *testing.T) {
 	}
 }
 
-func TestLoad_API_APIKeyUnset(t *testing.T) {
+func TestLoadAPIParams_APIKeyUnset(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "")
 
@@ -1807,7 +1891,7 @@ func TestLoad_API_APIKeyUnset(t *testing.T) {
 	assert.EqualError(t, errauth, "api key not found or empty")
 }
 
-func TestLoad_API_APIKeyInvalid(t *testing.T) {
+func TestLoadAPIParams_APIKeyInvalid(t *testing.T) {
 	tests := map[string]string{
 		"invalid format 1": "not-uuid",
 		"invalid format 2": "00000000-0000-0000-8000-000000000000",
@@ -1830,7 +1914,7 @@ func TestLoad_API_APIKeyInvalid(t *testing.T) {
 	}
 }
 
-func TestLoadParams_ApiKey_SettingTakePrecedence(t *testing.T) {
+func TestLoadAPIParams_ApiKey_SettingTakePrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("config", "testdata/.wakatime.cfg")
 	v.Set("entity", "testdata/heartbeat_go.json")
@@ -1847,7 +1931,7 @@ func TestLoadParams_ApiKey_SettingTakePrecedence(t *testing.T) {
 	assert.Equal(t, "00000000-0000-4000-8000-000000000000", params.Key)
 }
 
-func TestLoadParams_ApiKey_FromVault(t *testing.T) {
+func TestLoadAPIParams_ApiKey_FromVault(t *testing.T) {
 	v := viper.New()
 	v.Set("config", "testdata/.wakatime-vault.cfg")
 	v.Set("entity", "testdata/heartbeat_go.json")
@@ -1884,7 +1968,7 @@ func TestLoadParams_ApiKey_FromVault_Err_Darwin(t *testing.T) {
 	assert.EqualError(t, err, "failed to read api key from vault: exit status 1")
 }
 
-func TestLoad_API_APIKeyFromEnv(t *testing.T) {
+func TestLoadAPIParams_APIKeyFromEnv(t *testing.T) {
 	v := viper.New()
 
 	err := os.Setenv("WAKATIME_API_KEY", "00000000-0000-4000-8000-000000000000")
@@ -1898,7 +1982,7 @@ func TestLoad_API_APIKeyFromEnv(t *testing.T) {
 	assert.Equal(t, "00000000-0000-4000-8000-000000000000", params.Key)
 }
 
-func TestLoad_API_APIKeyFromEnvInvalid(t *testing.T) {
+func TestLoadAPIParams_APIKeyFromEnvInvalid(t *testing.T) {
 	v := viper.New()
 
 	err := os.Setenv("WAKATIME_API_KEY", "00000000-0000-4000-0000-000000000000")
@@ -1916,7 +2000,7 @@ func TestLoad_API_APIKeyFromEnvInvalid(t *testing.T) {
 	assert.EqualError(t, errauth, "invalid api key format")
 }
 
-func TestLoad_API_APIKeyFromEnv_ConfigTakesPrecedence(t *testing.T) {
+func TestLoadAPIParams_APIKeyFromEnv_ConfigTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("settings.api_key", "00000000-0000-4000-8000-000000000000")
 
@@ -1931,7 +2015,7 @@ func TestLoad_API_APIKeyFromEnv_ConfigTakesPrecedence(t *testing.T) {
 	assert.Equal(t, "00000000-0000-4000-8000-000000000000", params.Key)
 }
 
-func TestLoad_API_APIUrl(t *testing.T) {
+func TestLoadAPIParams_APIUrl(t *testing.T) {
 	tests := map[string]struct {
 		ViperAPIUrl       string
 		ViperAPIUrlConfig string
@@ -2008,7 +2092,7 @@ func TestLoad_API_APIUrl(t *testing.T) {
 	}
 }
 
-func TestLoad_APIUrl_Default(t *testing.T) {
+func TestLoadAPIParams_Url_Default(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 
@@ -2018,7 +2102,7 @@ func TestLoad_APIUrl_Default(t *testing.T) {
 	assert.Equal(t, api.BaseURL, params.URL)
 }
 
-func TestLoad_APIUrl_InvalidFormat(t *testing.T) {
+func TestLoadAPIParams_Url_InvalidFormat(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 	v.Set("api-url", "http://in valid")
@@ -2032,7 +2116,7 @@ func TestLoad_APIUrl_InvalidFormat(t *testing.T) {
 	assert.EqualError(t, errauth, `invalid api url: parse "http://in valid": invalid character " " in host name`)
 }
 
-func TestLoad_API_BackoffAt(t *testing.T) {
+func TestLoadAPIParams_BackoffAt(t *testing.T) {
 	v := viper.New()
 	v.Set("hostname", "my-computer")
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
@@ -2054,7 +2138,7 @@ func TestLoad_API_BackoffAt(t *testing.T) {
 	}, params)
 }
 
-func TestLoad_API_BackoffAtErr(t *testing.T) {
+func TestLoadAPIParams_BackoffAtErr(t *testing.T) {
 	v := viper.New()
 	v.Set("hostname", "my-computer")
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
@@ -2073,47 +2157,7 @@ func TestLoad_API_BackoffAtErr(t *testing.T) {
 	}, params)
 }
 
-func TestLoad_API_Plugin(t *testing.T) {
-	v := viper.New()
-	v.Set("hostname", "my-computer")
-	v.Set("key", "00000000-0000-4000-8000-000000000000")
-	v.Set("plugin", "plugin/10.0.0")
-
-	params, err := paramscmd.LoadAPIParams(v)
-	require.NoError(t, err)
-
-	assert.Equal(t, paramscmd.API{
-		Key:      "00000000-0000-4000-8000-000000000000",
-		URL:      "https://api.wakatime.com/api/v1",
-		Plugin:   "plugin/10.0.0",
-		Hostname: "my-computer",
-	}, params)
-}
-
-func TestLoad_API_Timeout_FlagTakesPrecedence(t *testing.T) {
-	v := viper.New()
-	v.Set("key", "00000000-0000-4000-8000-000000000000")
-	v.Set("timeout", 5)
-	v.Set("settings.timeout", 10)
-
-	params, err := paramscmd.LoadAPIParams(v)
-	require.NoError(t, err)
-
-	assert.Equal(t, 5*time.Second, params.Timeout)
-}
-
-func TestLoad_API_Timeout_FromConfig(t *testing.T) {
-	v := viper.New()
-	v.Set("key", "00000000-0000-4000-8000-000000000000")
-	v.Set("settings.timeout", 10)
-
-	params, err := paramscmd.LoadAPIParams(v)
-	require.NoError(t, err)
-
-	assert.Equal(t, 10*time.Second, params.Timeout)
-}
-
-func TestLoad_API_DisableSSLVerify_FlagTakesPrecedence(t *testing.T) {
+func TestLoadAPIParams_DisableSSLVerify_FlagTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 	v.Set("no-ssl-verify", true)
@@ -2125,7 +2169,7 @@ func TestLoad_API_DisableSSLVerify_FlagTakesPrecedence(t *testing.T) {
 	assert.True(t, params.DisableSSLVerify)
 }
 
-func TestLoad_API_DisableSSLVerify_FromConfig(t *testing.T) {
+func TestLoadAPIParams_DisableSSLVerify_FromConfig(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 	v.Set("settings.no_ssl_verify", true)
@@ -2136,7 +2180,7 @@ func TestLoad_API_DisableSSLVerify_FromConfig(t *testing.T) {
 	assert.True(t, params.DisableSSLVerify)
 }
 
-func TestLoad_API_DisableSSLVerify_Default(t *testing.T) {
+func TestLoadAPIParams_DisableSSLVerify_Default(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 
@@ -2146,7 +2190,7 @@ func TestLoad_API_DisableSSLVerify_Default(t *testing.T) {
 	assert.False(t, params.DisableSSLVerify)
 }
 
-func TestLoad_API_ProxyURL(t *testing.T) {
+func TestLoadAPIParams_ProxyURL(t *testing.T) {
 	tests := map[string]string{
 		"https":  "https://john:secret@example.org:8888",
 		"http":   "http://john:secret@example.org:8888",
@@ -2169,7 +2213,7 @@ func TestLoad_API_ProxyURL(t *testing.T) {
 	}
 }
 
-func TestLoad_API_ProxyURL_FlagTakesPrecedence(t *testing.T) {
+func TestLoadAPIParams_ProxyURL_FlagTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 	v.Set("proxy", "https://john:secret@example.org:8888")
@@ -2181,7 +2225,7 @@ func TestLoad_API_ProxyURL_FlagTakesPrecedence(t *testing.T) {
 	assert.Equal(t, "https://john:secret@example.org:8888", params.ProxyURL)
 }
 
-func TestLoad_API_ProxyURL_UserDefinedTakesPrecedenceOverEnvironment(t *testing.T) {
+func TestLoadAPIParams_ProxyURL_UserDefinedTakesPrecedenceOverEnvironment(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 	v.Set("proxy", "https://john:secret@example.org:8888")
@@ -2197,7 +2241,7 @@ func TestLoad_API_ProxyURL_UserDefinedTakesPrecedenceOverEnvironment(t *testing.
 	assert.Equal(t, "https://john:secret@example.org:8888", params.ProxyURL)
 }
 
-func TestLoad_API_ProxyURL_FromConfig(t *testing.T) {
+func TestLoadAPIParams_ProxyURL_FromConfig(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 	v.Set("settings.proxy", "https://john:secret@example.org:8888")
@@ -2208,7 +2252,7 @@ func TestLoad_API_ProxyURL_FromConfig(t *testing.T) {
 	assert.Equal(t, "https://john:secret@example.org:8888", params.ProxyURL)
 }
 
-func TestLoad_API_ProxyURL_FromEnvironment(t *testing.T) {
+func TestLoadAPIParams_ProxyURL_FromEnvironment(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 
@@ -2223,7 +2267,7 @@ func TestLoad_API_ProxyURL_FromEnvironment(t *testing.T) {
 	assert.Equal(t, "https://john:secret@example.org:8888", params.ProxyURL)
 }
 
-func TestLoad_API_ProxyURL_NoProxyFromEnvironment(t *testing.T) {
+func TestLoadAPIParams_ProxyURL_NoProxyFromEnvironment(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 
@@ -2238,7 +2282,7 @@ func TestLoad_API_ProxyURL_NoProxyFromEnvironment(t *testing.T) {
 	assert.Empty(t, params.ProxyURL)
 }
 
-func TestLoad_API_ProxyURL_InvalidFormat(t *testing.T) {
+func TestLoadAPIParams_ProxyURL_InvalidFormat(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 	v.Set("proxy", "ftp://john:secret@example.org:8888")
@@ -2256,7 +2300,7 @@ func TestLoad_API_ProxyURL_InvalidFormat(t *testing.T) {
 			" 'socks5://user:pass@host:port' or 'domain\\\\user:pass.'")
 }
 
-func TestLoad_API_SSLCertFilepath_FlagTakesPrecedence(t *testing.T) {
+func TestLoadAPIParams_SSLCertFilepath_FlagTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 	v.Set("ssl-certs-file", "~/path/to/cert.pem")
@@ -2270,7 +2314,7 @@ func TestLoad_API_SSLCertFilepath_FlagTakesPrecedence(t *testing.T) {
 	assert.Equal(t, filepath.Join(home, "/path/to/cert.pem"), params.SSLCertFilepath)
 }
 
-func TestLoad_API_SSLCertFilepath_FromConfig(t *testing.T) {
+func TestLoadAPIParams_SSLCertFilepath_FromConfig(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 	v.Set("settings.ssl_certs_file", "/path/to/cert.pem")
@@ -2281,7 +2325,7 @@ func TestLoad_API_SSLCertFilepath_FromConfig(t *testing.T) {
 	assert.Equal(t, "/path/to/cert.pem", params.SSLCertFilepath)
 }
 
-func TestLoadParams_Hostname_FlagTakesPrecedence(t *testing.T) {
+func TestLoadAPIParams_Hostname_FlagTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 	v.Set("hostname", "my-machine")
@@ -2298,7 +2342,7 @@ func TestLoadParams_Hostname_FlagTakesPrecedence(t *testing.T) {
 	assert.Equal(t, "my-machine", params.Hostname)
 }
 
-func TestLoadParams_Hostname_FromConfig(t *testing.T) {
+func TestLoadAPIParams_Hostname_FromConfig(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 	v.Set("settings.hostname", "my-machine")
@@ -2309,7 +2353,7 @@ func TestLoadParams_Hostname_FromConfig(t *testing.T) {
 	assert.Equal(t, "my-machine", params.Hostname)
 }
 
-func TestLoadParams_Hostname_FromConfig_ConfigTakesPrecedence(t *testing.T) {
+func TestLoadAPIParams_Hostname_ConfigTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 	v.Set("settings.hostname", "my-machine")
@@ -2325,7 +2369,7 @@ func TestLoadParams_Hostname_FromConfig_ConfigTakesPrecedence(t *testing.T) {
 	assert.Equal(t, "my-machine", params.Hostname)
 }
 
-func TestLoadParams_Hostname_FromGitpodEnv(t *testing.T) {
+func TestLoadAPIParams_Hostname_FromGitpodEnv(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 
@@ -2340,7 +2384,7 @@ func TestLoadParams_Hostname_FromGitpodEnv(t *testing.T) {
 	assert.Equal(t, "Gitpod", params.Hostname)
 }
 
-func TestLoadParams_Hostname_DefaultFromSystem(t *testing.T) {
+func TestLoadAPIParams_Hostname_DefaultFromSystem(t *testing.T) {
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 
@@ -2353,7 +2397,7 @@ func TestLoadParams_Hostname_DefaultFromSystem(t *testing.T) {
 	assert.Equal(t, expected, params.Hostname)
 }
 
-func TestLoadParams_StatusBar_HideCategories_FlagTakesPrecedence(t *testing.T) {
+func TestLoadStatusBarParams_HideCategories_FlagTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("today-hide-categories", true)
 	v.Set("settings.status_bar_hide_categories", "ignored")
@@ -2364,7 +2408,7 @@ func TestLoadParams_StatusBar_HideCategories_FlagTakesPrecedence(t *testing.T) {
 	assert.True(t, params.HideCategories)
 }
 
-func TestLoadParams_StatusBar_HideCategories_ConfigTakesPrecedence(t *testing.T) {
+func TestLoadStatusBarParams_HideCategories_ConfigTakesPrecedence(t *testing.T) {
 	v := viper.New()
 	v.Set("settings.status_bar_hide_categories", true)
 
@@ -2374,7 +2418,7 @@ func TestLoadParams_StatusBar_HideCategories_ConfigTakesPrecedence(t *testing.T)
 	assert.True(t, params.HideCategories)
 }
 
-func TestLoadParams_StatusBar_Output(t *testing.T) {
+func TestLoadStatusBarParams_Output(t *testing.T) {
 	tests := map[string]output.Output{
 		"text": output.TextOutput,
 		"json": output.JSONOutput,
@@ -2393,7 +2437,7 @@ func TestLoadParams_StatusBar_Output(t *testing.T) {
 	}
 }
 
-func TestLoadParams_StatusBar_Output_Default(t *testing.T) {
+func TestLoadStatusBarParams_Output_Default(t *testing.T) {
 	v := viper.New()
 
 	params, err := paramscmd.LoadStatusBarParams(v)
@@ -2402,7 +2446,7 @@ func TestLoadParams_StatusBar_Output_Default(t *testing.T) {
 	assert.Equal(t, output.TextOutput, params.Output)
 }
 
-func TestLoadParams_StatusBar_Output_Invalid(t *testing.T) {
+func TestLoadStatusBarParams_Output_Invalid(t *testing.T) {
 	v := viper.New()
 	v.Set("output", "invalid")
 
@@ -2495,18 +2539,24 @@ func TestHeartbeat_String(t *testing.T) {
 }
 
 func TestOffline_String(t *testing.T) {
+	lastSentAt, err := time.Parse(inipkg.DateFormat, "2021-08-30T18:50:42-03:00")
+	require.NoError(t, err)
+
 	offline := paramscmd.Offline{
 		Disabled:        true,
+		LastSentAt:      lastSentAt,
 		PrintMax:        6,
 		QueueFile:       "/path/to/queue.file",
 		QueueFileLegacy: "/path/to/legacy.file",
+		RateLimit:       15,
 		SyncMax:         12,
 	}
 
 	assert.Equal(
 		t,
-		"disabled: true, print max: 6, queue file: '/path/to/queue.file',"+
-			" queue file legacy: '/path/to/legacy.file', num sync max: 12",
+		"disabled: true, last sent at: '2021-08-30T18:50:42-03:00', print max: 6,"+
+			" queue file: '/path/to/queue.file', queue file legacy: '/path/to/legacy.file',"+
+			" num rate limit: 15, num sync max: 12",
 		offline.String(),
 	)
 }
@@ -2530,7 +2580,7 @@ func TestProjectParams_String(t *testing.T) {
 	)
 }
 
-func TestLoadParams_ProjectFromGitRemote(t *testing.T) {
+func TestLoadHeartbeatParams_ProjectFromGitRemote(t *testing.T) {
 	v := viper.New()
 	v.Set("git.project_from_git_remote", true)
 	v.Set("entity", "/path/to/file")
@@ -2569,14 +2619,6 @@ func TestStatusBar_String(t *testing.T) {
 		"hide categories: true, output: 'json'",
 		statusbar.String(),
 	)
-}
-
-func TestLoadParams_APIKeyPrefixSupported(t *testing.T) {
-	v := viper.New()
-	v.Set("key", "waka_00000000-0000-4000-8000-000000000000")
-
-	_, err := paramscmd.LoadAPIParams(v)
-	require.NoError(t, err)
 }
 
 func captureLogs(dest io.Writer) func() {
