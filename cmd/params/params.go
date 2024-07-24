@@ -13,6 +13,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/wakatime/wakatime-cli/pkg/api"
@@ -398,10 +399,7 @@ func LoadHeartbeatParams(v *viper.Viper) (Heartbeat, error) {
 	var extraHeartbeats []heartbeat.Heartbeat
 
 	if v.GetBool("extra-heartbeats") {
-		extraHeartbeats, err = readExtraHeartbeats()
-		if err != nil {
-			log.Errorf("failed to read extra heartbeats: %s", err)
-		}
+		extraHeartbeats = readExtraHeartbeats()
 	}
 
 	var isWrite *bool
@@ -752,20 +750,27 @@ func readAPIKeyFromCommand(cmdStr string) (string, error) {
 	return strings.TrimSpace(string(out)), nil
 }
 
-func readExtraHeartbeats() ([]heartbeat.Heartbeat, error) {
-	in := bufio.NewReader(os.Stdin)
+var extraHeartbeatsCache *[]heartbeat.Heartbeat // nolint:gochecknoglobals
+var once sync.Once                              // nolint:gochecknoglobals
 
-	input, err := in.ReadString('\n')
-	if err != nil && err != io.EOF {
-		log.Debugf("failed to read data from stdin: %s", err)
-	}
+func readExtraHeartbeats() []heartbeat.Heartbeat {
+	once.Do(func() {
+		in := bufio.NewReader(os.Stdin)
 
-	heartbeats, err := parseExtraHeartbeats(input)
-	if err != nil {
-		return nil, fmt.Errorf("failed parsing: %s", err)
-	}
+		input, err := in.ReadString('\n')
+		if err != nil && err != io.EOF {
+			log.Debugf("failed to read data from stdin: %s", err)
+		}
 
-	return heartbeats, nil
+		heartbeats, err := parseExtraHeartbeats(input)
+		if err != nil {
+			log.Errorf("failed parsing: %s", err)
+		}
+
+		extraHeartbeatsCache = &heartbeats
+	})
+
+	return *extraHeartbeatsCache
 }
 
 func parseExtraHeartbeats(data string) ([]heartbeat.Heartbeat, error) {
