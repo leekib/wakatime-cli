@@ -8,10 +8,12 @@ import (
 	"net/http/httptest"
 	"os"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
 	"github.com/wakatime/wakatime-cli/cmd/offlinesync"
+	cmdparams "github.com/wakatime/wakatime-cli/cmd/params"
 	"github.com/wakatime/wakatime-cli/pkg/exitcode"
 	"github.com/wakatime/wakatime-cli/pkg/heartbeat"
 
@@ -22,6 +24,8 @@ import (
 )
 
 func TestRunWithRateLimiting(t *testing.T) {
+	resetSingleton(t)
+
 	testServerURL, router, tearDown := setupTestServer()
 	defer tearDown()
 
@@ -112,6 +116,8 @@ func TestRunWithRateLimiting(t *testing.T) {
 }
 
 func TestRunWithoutRateLimiting(t *testing.T) {
+	resetSingleton(t)
+
 	testServerURL, router, tearDown := setupTestServer()
 	defer tearDown()
 
@@ -202,6 +208,8 @@ func TestRunWithoutRateLimiting(t *testing.T) {
 }
 
 func TestRunWithRateLimiting_RateLimited(t *testing.T) {
+	resetSingleton(t)
+
 	v := viper.New()
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 	v.Set("heartbeat-rate-limit-seconds", 500)
@@ -214,6 +222,8 @@ func TestRunWithRateLimiting_RateLimited(t *testing.T) {
 }
 
 func TestSyncOfflineActivity(t *testing.T) {
+	resetSingleton(t)
+
 	testServerURL, router, tearDown := setupTestServer()
 	defer tearDown()
 
@@ -302,6 +312,8 @@ func TestSyncOfflineActivity(t *testing.T) {
 }
 
 func TestSyncOfflineActivity_QueueFileFromConfig(t *testing.T) {
+	resetSingleton(t)
+
 	testServerURL, router, tearDown := setupTestServer()
 	defer tearDown()
 
@@ -391,6 +403,8 @@ func TestSyncOfflineActivity_QueueFileFromConfig(t *testing.T) {
 }
 
 func TestSyncOfflineActivity_MultipleApiKey(t *testing.T) {
+	resetSingleton(t)
+
 	testServerURL, router, tearDown := setupTestServer()
 	defer tearDown()
 
@@ -514,4 +528,10 @@ func insertHeartbeatRecord(t *testing.T, db *bolt.DB, bucket string, h heartbeat
 		return nil
 	})
 	require.NoError(t, err)
+}
+
+func resetSingleton(t *testing.T) {
+	t.Helper()
+
+	cmdparams.Once = sync.Once{}
 }
