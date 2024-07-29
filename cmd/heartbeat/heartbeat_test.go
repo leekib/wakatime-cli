@@ -140,7 +140,8 @@ func TestSendHeartbeats_RateLimited(t *testing.T) {
 	tmpFile, err := os.CreateTemp(t.TempDir(), "wakatime")
 	require.NoError(t, err)
 
-	defer tmpFile.Close()
+	offlineQueueFile, err := os.CreateTemp(t.TempDir(), "")
+	require.NoError(t, err)
 
 	v := viper.New()
 	v.SetDefault("sync-offline-activity", 1000)
@@ -162,10 +163,8 @@ func TestSendHeartbeats_RateLimited(t *testing.T) {
 	v.Set("write", true)
 	v.Set("heartbeat-rate-limit-seconds", 500)
 	v.Set("internal-config", tmpFile.Name())
+	v.Set("offline-queue-file", offlineQueueFile.Name())
 	v.Set("internal.heartbeats_last_sent_at", time.Now().Add(-time.Minute).Format(time.RFC3339))
-
-	offlineQueueFile, err := os.CreateTemp(t.TempDir(), "")
-	require.NoError(t, err)
 
 	err = cmdheartbeat.SendHeartbeats(v, offlineQueueFile.Name())
 	require.NoError(t, err)

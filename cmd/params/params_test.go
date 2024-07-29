@@ -2630,6 +2630,85 @@ func TestStatusBar_String(t *testing.T) {
 	)
 }
 
+func TestLoadHeartbeatParams_ExtraHeartbeats_StdinReadOnlyOnce(t *testing.T) {
+	r, w, err := os.Pipe()
+	require.NoError(t, err)
+
+	defer func() {
+		r.Close()
+		w.Close()
+	}()
+
+	origStdin := os.Stdin
+
+	defer func() { os.Stdin = origStdin }()
+
+	os.Stdin = r
+
+	cmdparams.Once = sync.Once{}
+
+	data, err := os.ReadFile("testdata/extra_heartbeats.json")
+	require.NoError(t, err)
+
+	go func() {
+		_, err := w.Write(data)
+		require.NoError(t, err)
+
+		w.Close()
+	}()
+
+	v := viper.New()
+	v.Set("entity", "/path/to/file")
+	v.Set("extra-heartbeats", true)
+
+	params, err := cmdparams.LoadHeartbeatParams(v)
+	require.NoError(t, err)
+
+	assert.Len(t, params.ExtraHeartbeats, 2)
+	assert.Equal(t, "Golang", params.ExtraHeartbeats[0].LanguageAlternate)
+
+	r.Close()
+	w.Close()
+
+	// change stdin and make sure loading params uses old stdin
+	r, w, err = os.Pipe()
+	require.NoError(t, err)
+
+	data, err = os.ReadFile("testdata/extra_heartbeats_with_string_values.json")
+	require.NoError(t, err)
+
+	go func() {
+		_, err := w.Write(data)
+		require.NoError(t, err)
+
+		w.Close()
+	}()
+
+	os.Stdin = r
+
+	v = viper.New()
+	v.Set("entity", "/path/to/file")
+	v.Set("extra-heartbeats", true)
+
+	params, err = cmdparams.LoadHeartbeatParams(v)
+	require.NoError(t, err)
+
+	assert.Len(t, params.ExtraHeartbeats, 2)
+	assert.Equal(t, "Golang", params.ExtraHeartbeats[0].LanguageAlternate)
+
+	v = viper.New()
+	v.Set("entity", "/path/to/file")
+	v.Set("extra-heartbeats", true)
+
+	cmdparams.Once = sync.Once{}
+
+	params, err = cmdparams.LoadHeartbeatParams(v)
+	require.NoError(t, err)
+
+	assert.Len(t, params.ExtraHeartbeats, 2)
+	assert.Empty(t, params.ExtraHeartbeats[0].LanguageAlternate)
+}
+
 func captureLogs(dest io.Writer) func() {
 	// set verbose
 	log.SetVerbose(true)
