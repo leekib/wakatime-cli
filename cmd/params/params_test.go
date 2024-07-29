@@ -1771,24 +1771,6 @@ func TestLoadOfflineParams_LastSentAt_Err(t *testing.T) {
 	assert.Zero(t, params.LastSentAt)
 }
 
-func TestLoadOfflineParams_QueueFile(t *testing.T) {
-	v := viper.New()
-	v.Set("offline-queue-file", "/path/to/file")
-
-	params := cmdparams.LoadOfflineParams(v)
-
-	assert.Equal(t, "/path/to/file", params.QueueFile)
-}
-
-func TestLoadOfflineParams_QueueFileLegacy(t *testing.T) {
-	v := viper.New()
-	v.Set("offline-queue-file-legacy", "/path/to/file")
-
-	params := cmdparams.LoadOfflineParams(v)
-
-	assert.Equal(t, "/path/to/file", params.QueueFileLegacy)
-}
-
 func TestLoadOfflineParams_SyncMax(t *testing.T) {
 	v := viper.New()
 	v.Set("sync-offline-activity", 42)
@@ -2552,19 +2534,16 @@ func TestOffline_String(t *testing.T) {
 	require.NoError(t, err)
 
 	offline := cmdparams.Offline{
-		Disabled:        true,
-		LastSentAt:      lastSentAt,
-		PrintMax:        6,
-		QueueFile:       "/path/to/queue.file",
-		QueueFileLegacy: "/path/to/legacy.file",
-		RateLimit:       15,
-		SyncMax:         12,
+		Disabled:   true,
+		LastSentAt: lastSentAt,
+		PrintMax:   6,
+		RateLimit:  15,
+		SyncMax:    12,
 	}
 
 	assert.Equal(
 		t,
 		"disabled: true, last sent at: '2021-08-30T18:50:42-03:00', print max: 6,"+
-			" queue file: '/path/to/queue.file', queue file legacy: '/path/to/legacy.file',"+
 			" num rate limit: 15, num sync max: 12",
 		offline.String(),
 	)
