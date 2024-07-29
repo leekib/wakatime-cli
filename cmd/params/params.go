@@ -750,7 +750,7 @@ func readAPIKeyFromCommand(cmdStr string) (string, error) {
 	return strings.TrimSpace(string(out)), nil
 }
 
-var extraHeartbeatsCache *[]heartbeat.Heartbeat // nolint:gochecknoglobals
+var extraHeartbeatsCache []heartbeat.Heartbeat // nolint:gochecknoglobals
 
 // Once prevents reading from stdin twice.
 var Once sync.Once // nolint:gochecknoglobals
@@ -769,10 +769,10 @@ func readExtraHeartbeats() []heartbeat.Heartbeat {
 			log.Errorf("failed parsing: %s", err)
 		}
 
-		extraHeartbeatsCache = &heartbeats
+		extraHeartbeatsCache = heartbeats
 	})
 
-	return *extraHeartbeatsCache
+	return extraHeartbeatsCache
 }
 
 func parseExtraHeartbeats(data string) ([]heartbeat.Heartbeat, error) {

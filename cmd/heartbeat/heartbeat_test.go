@@ -35,6 +35,8 @@ import (
 )
 
 func TestSendHeartbeats(t *testing.T) {
+	resetSingleton(t)
+
 	testServerURL, router, tearDown := setupTestServer()
 	defer tearDown()
 
@@ -120,6 +122,8 @@ func TestSendHeartbeats(t *testing.T) {
 }
 
 func TestSendHeartbeats_RateLimited(t *testing.T) {
+	resetSingleton(t)
+
 	testServerURL, router, tearDown := setupTestServer()
 	defer tearDown()
 
@@ -132,6 +136,11 @@ func TestSendHeartbeats_RateLimited(t *testing.T) {
 		// Should not be called
 		numCalls++
 	})
+
+	tmpFile, err := os.CreateTemp(t.TempDir(), "wakatime")
+	require.NoError(t, err)
+
+	defer tmpFile.Close()
 
 	v := viper.New()
 	v.SetDefault("sync-offline-activity", 1000)
@@ -152,6 +161,7 @@ func TestSendHeartbeats_RateLimited(t *testing.T) {
 	v.Set("timeout", 5)
 	v.Set("write", true)
 	v.Set("heartbeat-rate-limit-seconds", 500)
+	v.Set("internal-config", tmpFile.Name())
 	v.Set("internal.heartbeats_last_sent_at", time.Now().Add(-time.Minute).Format(time.RFC3339))
 
 	offlineQueueFile, err := os.CreateTemp(t.TempDir(), "")
@@ -164,6 +174,8 @@ func TestSendHeartbeats_RateLimited(t *testing.T) {
 }
 
 func TestSendHeartbeats_WithFiltering_Exclude(t *testing.T) {
+	resetSingleton(t)
+
 	testServerURL, router, tearDown := setupTestServer()
 	defer tearDown()
 
@@ -198,6 +210,8 @@ func TestSendHeartbeats_WithFiltering_Exclude(t *testing.T) {
 }
 
 func TestSendHeartbeats_ExtraHeartbeats(t *testing.T) {
+	resetSingleton(t)
+
 	testServerURL, router, tearDown := setupTestServer()
 	defer tearDown()
 
@@ -292,8 +306,6 @@ func TestSendHeartbeats_ExtraHeartbeats(t *testing.T) {
 
 	os.Stdin = r
 
-	cmdparams.Once = sync.Once{}
-
 	data, err := os.ReadFile("testdata/extra_heartbeats.json")
 	require.NoError(t, err)
 
@@ -340,6 +352,8 @@ func TestSendHeartbeats_ExtraHeartbeats(t *testing.T) {
 }
 
 func TestSendHeartbeats_ExtraHeartbeats_Sanitize(t *testing.T) {
+	resetSingleton(t)
+
 	testServerURL, router, tearDown := setupTestServer()
 	defer tearDown()
 
@@ -375,8 +389,6 @@ func TestSendHeartbeats_ExtraHeartbeats_Sanitize(t *testing.T) {
 	defer func() { os.Stdin = origStdin }()
 
 	os.Stdin = r
-
-	cmdparams.Once = sync.Once{}
 
 	data, err := os.ReadFile("testdata/extra_heartbeats.json")
 	require.NoError(t, err)
@@ -476,6 +488,8 @@ func TestSendHeartbeats_ExtraHeartbeats_Sanitize(t *testing.T) {
 }
 
 func TestSendHeartbeats_NonExistingEntity(t *testing.T) {
+	resetSingleton(t)
+
 	tmpDir := t.TempDir()
 
 	logFile, err := os.CreateTemp(tmpDir, "")
@@ -518,6 +532,8 @@ func TestSendHeartbeats_NonExistingEntity(t *testing.T) {
 }
 
 func TestSendHeartbeats_IsUnsavedEntity(t *testing.T) {
+	resetSingleton(t)
+
 	testServerURL, router, tearDown := setupTestServer()
 	defer tearDown()
 
@@ -586,8 +602,6 @@ func TestSendHeartbeats_IsUnsavedEntity(t *testing.T) {
 
 	os.Stdin = inr
 
-	cmdparams.Once = sync.Once{}
-
 	data, err := os.ReadFile("testdata/extra_heartbeats_is_unsaved_entity.json")
 	require.NoError(t, err)
 
@@ -652,6 +666,8 @@ func TestSendHeartbeats_IsUnsavedEntity(t *testing.T) {
 }
 
 func TestSendHeartbeats_NonExistingExtraHeartbeatsEntity(t *testing.T) {
+	resetSingleton(t)
+
 	testServerURL, router, tearDown := setupTestServer()
 	defer tearDown()
 
@@ -718,8 +734,6 @@ func TestSendHeartbeats_NonExistingExtraHeartbeatsEntity(t *testing.T) {
 
 	os.Stdin = inr
 
-	cmdparams.Once = sync.Once{}
-
 	data, err := os.ReadFile("testdata/extra_heartbeats_nonexisting_entity.json")
 	require.NoError(t, err)
 
@@ -776,6 +790,8 @@ func TestSendHeartbeats_NonExistingExtraHeartbeatsEntity(t *testing.T) {
 }
 
 func TestSendHeartbeats_ErrAuth_UnsetAPIKey(t *testing.T) {
+	resetSingleton(t)
+
 	_, router, tearDown := setupTestServer()
 	defer tearDown()
 
@@ -811,6 +827,8 @@ func TestSendHeartbeats_ErrAuth_UnsetAPIKey(t *testing.T) {
 }
 
 func TestSendHeartbeats_ErrBackoff(t *testing.T) {
+	resetSingleton(t)
+
 	testServerURL, router, tearDown := setupTestServer()
 	defer tearDown()
 
@@ -874,6 +892,8 @@ func TestSendHeartbeats_ErrBackoff(t *testing.T) {
 }
 
 func TestSendHeartbeats_ErrBackoff_Verbose(t *testing.T) {
+	resetSingleton(t)
+
 	testServerURL, router, tearDown := setupTestServer()
 	defer tearDown()
 
@@ -938,6 +958,8 @@ func TestSendHeartbeats_ErrBackoff_Verbose(t *testing.T) {
 }
 
 func TestSendHeartbeats_ObfuscateProject(t *testing.T) {
+	resetSingleton(t)
+
 	testServerURL, router, tearDown := setupTestServer()
 	defer tearDown()
 
@@ -1022,6 +1044,8 @@ func TestSendHeartbeats_ObfuscateProject(t *testing.T) {
 }
 
 func TestSendHeartbeats_ObfuscateProjectNotBranch(t *testing.T) {
+	resetSingleton(t)
+
 	testServerURL, router, tearDown := setupTestServer()
 	defer tearDown()
 
@@ -1107,6 +1131,8 @@ func TestSendHeartbeats_ObfuscateProjectNotBranch(t *testing.T) {
 }
 
 func TestRateLimited(t *testing.T) {
+	resetSingleton(t)
+
 	p := cmdheartbeat.RateLimitParams{
 		Timeout:    time.Duration(offline.RateLimitDefaultSeconds) * time.Second,
 		LastSentAt: time.Now(),
@@ -1116,6 +1142,8 @@ func TestRateLimited(t *testing.T) {
 }
 
 func TestRateLimited_NotLimited(t *testing.T) {
+	resetSingleton(t)
+
 	p := cmdheartbeat.RateLimitParams{
 		LastSentAt: time.Now().Add(time.Duration(-offline.RateLimitDefaultSeconds*2) * time.Second),
 		Timeout:    time.Duration(offline.RateLimitDefaultSeconds) * time.Second,
@@ -1125,6 +1153,8 @@ func TestRateLimited_NotLimited(t *testing.T) {
 }
 
 func TestRateLimited_Disabled(t *testing.T) {
+	resetSingleton(t)
+
 	p := cmdheartbeat.RateLimitParams{
 		Disabled: true,
 	}
@@ -1133,6 +1163,8 @@ func TestRateLimited_Disabled(t *testing.T) {
 }
 
 func TestRateLimited_TimeoutZero(t *testing.T) {
+	resetSingleton(t)
+
 	p := cmdheartbeat.RateLimitParams{
 		LastSentAt: time.Time{},
 	}
@@ -1141,6 +1173,8 @@ func TestRateLimited_TimeoutZero(t *testing.T) {
 }
 
 func TestRateLimited_LastSentAtZero(t *testing.T) {
+	resetSingleton(t)
+
 	p := cmdheartbeat.RateLimitParams{
 		Timeout: 0,
 	}
@@ -1149,6 +1183,8 @@ func TestRateLimited_LastSentAtZero(t *testing.T) {
 }
 
 func TestResetRateLimit(t *testing.T) {
+	resetSingleton(t)
+
 	tmpFile, err := os.CreateTemp(t.TempDir(), "wakatime")
 	require.NoError(t, err)
 
@@ -1215,4 +1251,10 @@ func copyFile(t *testing.T, source, destination string) {
 
 	err = os.WriteFile(destination, input, 0600)
 	require.NoError(t, err)
+}
+
+func resetSingleton(t *testing.T) {
+	t.Helper()
+
+	cmdparams.Once = sync.Once{}
 }
