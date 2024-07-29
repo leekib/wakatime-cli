@@ -131,13 +131,11 @@ type (
 
 	// Offline contains offline related parameters.
 	Offline struct {
-		Disabled        bool
-		LastSentAt      time.Time
-		PrintMax        int
-		QueueFile       string
-		QueueFileLegacy string
-		RateLimit       time.Duration
-		SyncMax         int
+		Disabled   bool
+		LastSentAt time.Time
+		PrintMax   int
+		RateLimit  time.Duration
+		SyncMax    int
 	}
 
 	// ProjectParams params for project name sanitization.
@@ -674,13 +672,11 @@ func LoadOfflineParams(v *viper.Viper) Offline {
 	}
 
 	return Offline{
-		Disabled:        disabled,
-		LastSentAt:      lastSentAt,
-		PrintMax:        v.GetInt("print-offline-heartbeats"),
-		QueueFile:       vipertools.GetString(v, "offline-queue-file"),
-		QueueFileLegacy: vipertools.GetString(v, "offline-queue-file-legacy"),
-		RateLimit:       time.Duration(rateLimit) * time.Second,
-		SyncMax:         syncMax,
+		Disabled:   disabled,
+		LastSentAt: lastSentAt,
+		PrintMax:   v.GetInt("print-offline-heartbeats"),
+		RateLimit:  time.Duration(rateLimit) * time.Second,
+		SyncMax:    syncMax,
 	}
 }
 
@@ -1074,13 +1070,10 @@ func (p Offline) String() string {
 	}
 
 	return fmt.Sprintf(
-		"disabled: %t, last sent at: '%s', print max: %d, queue file: '%s', queue file legacy: '%s',"+
-			" num rate limit: %d, num sync max: %d",
+		"disabled: %t, last sent at: '%s', print max: %d, num rate limit: %d, num sync max: %d",
 		p.Disabled,
 		lastSentAt,
 		p.PrintMax,
-		p.QueueFile,
-		p.QueueFileLegacy,
 		p.RateLimit,
 		p.SyncMax,
 	)
