@@ -13,7 +13,7 @@ const (
 	FileType EntityType = iota
 	// DomainType represents a domain entity.
 	DomainType
-	// UrlType represents a url entity without the url params.
+	// URLType represents a url entity without the url params.
 	URLType
 	// EventType represents a meeting or calendar event.
 	EventType
