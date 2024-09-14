@@ -14,7 +14,7 @@ const (
 	// DomainType represents a domain entity.
 	DomainType
 	// UrlType represents a url entity without the url params.
-	UrlType
+	URLType
 	// EventType represents a meeting or calendar event.
 	EventType
 	// AppType represents an app entity.
@@ -37,7 +37,7 @@ func ParseEntityType(s string) (EntityType, error) {
 	case domainTypeString:
 		return DomainType, nil
 	case urlTypeString:
-		return UrlType, nil
+		return URLType, nil
 	case eventTypeString:
 		return EventType, nil
 	case appTypeString:
@@ -78,7 +78,7 @@ func (t EntityType) String() string {
 		return fileTypeString
 	case DomainType:
 		return domainTypeString
-	case UrlType:
+	case URLType:
 		return urlTypeString
 	case EventType:
 		return eventTypeString
