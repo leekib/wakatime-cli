@@ -290,6 +290,7 @@ func languageTests() map[string]heartbeat.Language {
 		"Git":                              heartbeat.LanguageGit,
 		"Git Attributes":                   heartbeat.LanguageGitAttributes,
 		"Git Config":                       heartbeat.LanguageGitConfig,
+		"Gleam":                            heartbeat.LanguageGleam,
 		"GLSL":                             heartbeat.LanguageGLSL,
 		"Glyph":                            heartbeat.LanguageGlyph,
 		"Glyph Bitmap Distribution Format": heartbeat.LanguageGlyphBitmap,
