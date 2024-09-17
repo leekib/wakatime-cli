@@ -563,6 +563,8 @@ const (
 	LanguageGitAttributes
 	// LanguageGitConfig represents the Git Config programming language.
 	LanguageGitConfig
+	// LanguageGleam represents the Gleam programming language.
+	LanguageGleam
 	// LanguageGLSL represents the GLSL programming language.
 	LanguageGLSL
 	// LanguageGlyph represents the Glyph programming language.
@@ -1871,6 +1873,7 @@ const (
 	languageGitStr                         = "Git"
 	languageGitAttributesStr               = "Git Attributes"
 	languageGitConfigStr                   = "Git Config"
+	languageGleamStr                       = "Gleam"
 	languageGLSLStr                        = "GLSL"
 	languageGlyphStr                       = "Glyph"
 	languageGlyphBitmapStr                 = "Glyph Bitmap Distribution Format"
@@ -3002,6 +3005,8 @@ func ParseLanguage(s string) (Language, bool) {
 		return LanguageGitAttributes, true
 	case normalizeString(languageGitConfigStr):
 		return LanguageGitConfig, true
+	case normalizeString(languageGleamStr):
+		return LanguageGleam, true
 	case normalizeString(languageGLSLStr):
 		return LanguageGLSL, true
 	case normalizeString(languageGlyphStr):
@@ -4708,6 +4713,8 @@ func (l Language) String() string {
 		return languageGitAttributesStr
 	case LanguageGitConfig:
 		return languageGitConfigStr
+	case LanguageGleam:
+		return languageGleamStr
 	case LanguageGLSL:
 		return languageGLSLStr
 	case LanguageGlyph:
