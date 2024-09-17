@@ -345,6 +345,8 @@ const (
 	LanguageDataWeave
 	// LanguageDASM16 represents the DASM16 programming language.
 	LanguageDASM16
+	// LanguageDax represents the Dax programming language.
+	LanguageDax
 	// LanguageDCL represents the DCL programming language.
 	LanguageDCL
 	// LanguageDCPU16Asm represents the DCPU16Asm programming language.
@@ -617,6 +619,8 @@ const (
 	LanguageHAProxy
 	// LanguageHarbour represents the Harbour programming language.
 	LanguageHarbour
+	// LanguageHare represents the Hare programming language.
+	LanguageHare
 	// LanguageHaskell represents the Haskell programming language.
 	LanguageHaskell
 	// LanguageHaxe represents the Haxe programming language.
@@ -979,6 +983,8 @@ const (
 	LanguageNuSMV
 	// LanguageObjdump represents the Objdump programming language.
 	LanguageObjdump
+	// LanguageObjectPascal represents the ObjectPascal programming language.
+	LanguageObjectPascal
 	// LanguageObjectiveC represents the ObjectiveC programming language.
 	LanguageObjectiveC
 	// LanguageObjectiveCPP represents the ObjectiveC++ programming language.
@@ -1745,6 +1751,7 @@ const (
 	languageDartStr                        = "Dart"
 	languageDataWeaveStr                   = "DataWeave"
 	languageDASM16Str                      = "DASM16"
+	languageDaxStr                         = "Dax"
 	languageDCLStr                         = "DCL"
 	languageDCPU16AsmStr                   = "DCPU-16 ASM"
 	languageDebianControlFileStr           = "Debian Control file"
@@ -1880,6 +1887,7 @@ const (
 	languageHandlebarsStr                  = "Handlebars"
 	languageHAProxyStr                     = "HAProxy"
 	languageHarbourStr                     = "Harbour"
+	languageHareStr                        = "Hare"
 	languageHaskellStr                     = "Haskell"
 	languageHaxeStr                        = "Haxe"
 	languageHCLStr                         = "HCL"
@@ -2061,6 +2069,7 @@ const (
 	languageNushellStr                     = "Nushell"
 	languageNuSMVStr                       = "NuSMV"
 	languageObjdumpStr                     = "objdump"
+	languageObjectPascalStr                = "ObjectPascal"
 	languageObjectiveCStr                  = "Objective-C"
 	languageObjectiveCPPStr                = "Objective-C++"
 	languageObjectiveJStr                  = "Objective-J"
@@ -2755,6 +2764,8 @@ func ParseLanguage(s string) (Language, bool) {
 		return LanguageDataWeave, true
 	case normalizeString(languageDASM16Str):
 		return LanguageDASM16, true
+	case normalizeString(languageDaxStr):
+		return LanguageDax, true
 	case normalizeString(languageDCLStr):
 		return LanguageDCL, true
 	case normalizeString(languageDCPU16AsmStr):
@@ -3025,6 +3036,8 @@ func ParseLanguage(s string) (Language, bool) {
 		return LanguageHAProxy, true
 	case normalizeString(languageHarbourStr):
 		return LanguageHarbour, true
+	case normalizeString(languageHareStr):
+		return LanguageHare, true
 	case normalizeString(languageHaskellStr):
 		return LanguageHaskell, true
 	case normalizeString(languageHaxeStr):
@@ -3387,6 +3400,8 @@ func ParseLanguage(s string) (Language, bool) {
 		return LanguageNASMObjdump, true
 	case normalizeString(languageObjdumpStr):
 		return LanguageObjdump, true
+	case normalizeString(languageObjectPascalStr):
+		return LanguageObjectPascal, true
 	case normalizeString(languageObjectiveCStr):
 		return LanguageObjectiveC, true
 	case normalizeString(languageObjectiveCPPStr):
@@ -4447,6 +4462,8 @@ func (l Language) String() string {
 		return languageDataWeaveStr
 	case LanguageDASM16:
 		return languageDASM16Str
+	case LanguageDax:
+		return languageDaxStr
 	case LanguageDCL:
 		return languageDCLStr
 	case LanguageDCPU16Asm:
@@ -4713,6 +4730,8 @@ func (l Language) String() string {
 		return languageHAProxyStr
 	case LanguageHarbour:
 		return languageHarbourStr
+	case LanguageHare:
+		return languageHareStr
 	case LanguageHaskell:
 		return languageHaskellStr
 	case LanguageHaxe:
@@ -5075,6 +5094,8 @@ func (l Language) String() string {
 		return languageNASMObjdumpStr
 	case LanguageObjdump:
 		return languageObjdumpStr
+	case LanguageObjectPascal:
+		return languageObjectPascalStr
 	case LanguageObjectiveC:
 		return languageObjectiveCStr
 	case LanguageObjectiveCPP:
