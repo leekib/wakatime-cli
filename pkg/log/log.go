@@ -9,43 +9,40 @@ import (
 
 	"github.com/wakatime/wakatime-cli/pkg/version"
 
-	l "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	jww "github.com/spf13/jwalterweatherman"
 )
 
-// nolint:gochecknoglobals
-var (
-	logEntry = new()
-	// Debugf logs a message at level Debug.
-	Debugf = logEntry.Debugf
-	// Infof logs a message at level Info.
-	Infof = logEntry.Infof
-	// Warnf logs a message at level Warn.
-	Warnf = logEntry.Warnf
-	// Errorf logs a message at level Error.
-	Errorf = logEntry.Errorf
-	// Fatalf logs a message at level Fatal then the process will exit with status set to 1.
-	Fatalf = logEntry.Fatalf
-	// Debugln logs a message at level Debug.
-	Debugln = logEntry.Debugln
-	// Infoln logs a message at level Info.
-	Infoln = logEntry.Infoln
-	// Warnln logs a message at level Warn.
-	Warnln = logEntry.Warnln
-	// Errorln logs a message at level Error.
-	Errorln = logEntry.Errorln
-	// Fatalln logs a message at level Fatal then the process will exit with status set to 1.
-	Fatalln = logEntry.Fatalln
-)
+// Logger is the log entry.
+type Logger struct {
+	entry             *logrus.Entry
+	metrics           bool
+	sendDiagsOnErrors bool
+	verbose           bool
+}
 
-func new() *l.Entry {
-	entry := l.NewEntry(&l.Logger{
+// New creates a new Logger.
+func New(verbose, sendDiagsOnErrors, metrics bool) *Logger {
+	logger := &Logger{
+		entry:             new(),
+		metrics:           metrics,
+		sendDiagsOnErrors: sendDiagsOnErrors,
+		verbose:           verbose,
+	}
+
+	logger.SetVerbose(verbose)
+
+	return logger
+}
+
+func new() *logrus.Entry {
+	entry := logrus.NewEntry(&logrus.Logger{
 		Out: os.Stdout,
-		Formatter: &l.JSONFormatter{
-			FieldMap: l.FieldMap{
-				l.FieldKeyTime: "now",
-				l.FieldKeyFile: "caller",
-				l.FieldKeyMsg:  "message",
+		Formatter: &logrus.JSONFormatter{
+			FieldMap: logrus.FieldMap{
+				logrus.FieldKeyTime: "now",
+				logrus.FieldKeyFile: "caller",
+				logrus.FieldKeyMsg:  "message",
 			},
 			DisableHTMLEscape: true,
 			CallerPrettyfier: func(f *runtime.Frame) (string, string) {
@@ -67,7 +64,7 @@ func new() *l.Entry {
 					fmt.Sprintf("%s:%d", file, f.Line)
 			},
 		},
-		Level:        l.InfoLevel,
+		Level:        logrus.InfoLevel,
 		ExitFunc:     os.Exit,
 		ReportCaller: true,
 	})
@@ -77,22 +74,50 @@ func new() *l.Entry {
 	return entry
 }
 
+// IsMetricsEnabled returns true if it should collect metrics.
+func (l *Logger) IsMetricsEnabled() bool {
+	return l.metrics
+}
+
+// IsVerboseEnabled returns true if debug is enabled.
+func (l *Logger) IsVerboseEnabled() bool {
+	return l.verbose
+}
+
 // Output returns the current log output.
-func Output() io.Writer {
-	return logEntry.Logger.Out
+func (l *Logger) Output() io.Writer {
+	return l.entry.Logger.Out
+}
+
+// SendDiagsOnErrors returns true if diagnostics should be sent on errors.
+func (l *Logger) SendDiagsOnErrors() bool {
+	return l.sendDiagsOnErrors
 }
 
 // SetOutput defines sets the log output to io.Writer.
-func SetOutput(w io.Writer) {
-	logEntry.Logger.Out = w
+func (l *Logger) SetOutput(w io.Writer) {
+	l.entry.Logger.Out = w
 }
 
 // SetVerbose sets log level to debug if enabled.
-func SetVerbose(verbose bool) {
+func (l *Logger) SetVerbose(verbose bool) {
 	if verbose {
-		logEntry.Logger.SetLevel(l.DebugLevel)
+		l.entry.Logger.SetLevel(logrus.DebugLevel)
 	} else {
-		logEntry.Logger.SetLevel(l.InfoLevel)
+		l.entry.Logger.SetLevel(logrus.InfoLevel)
+	}
+}
+
+// Flush flushes the log output and closes the file.
+func (l *Logger) Flush() {
+	if file, ok := l.entry.Logger.Out.(*os.File); ok {
+		if err := file.Sync(); err != nil {
+			l.entry.Debugf("failed to flush log file: %s", err)
+		}
+
+		if err := file.Close(); err != nil {
+			l.entry.Debugf("failed to close log file: %s", err)
+		}
 	}
 }
 
@@ -107,7 +132,57 @@ func SetJww(verbose bool, w io.Writer) {
 	}
 }
 
-// WithField adds a single field to the Entry.
-func WithField(key string, value any) {
-	logEntry.Data[key] = value
+// Debugf logs a message at level Debug.
+func (l *Logger) Debugf(format string, args ...any) {
+	l.entry.Debugf(format, args...)
+}
+
+// Infof logs a message at level Info.
+func (l *Logger) Infof(format string, args ...any) {
+	l.entry.Infof(format, args...)
+}
+
+// Warnf logs a message at level Warn.
+func (l *Logger) Warnf(format string, args ...any) {
+	l.entry.Warnf(format, args...)
+}
+
+// Errorf logs a message at level Error.
+func (l *Logger) Errorf(format string, args ...any) {
+	l.entry.Errorf(format, args...)
+}
+
+// Fatalf logs a message at level Fatal then the process will exit with status set to 1.
+func (l *Logger) Fatalf(format string, args ...any) {
+	l.entry.Fatalf(format, args...)
+}
+
+// Debugln logs a message at level Debug.
+func (l *Logger) Debugln(args ...any) {
+	l.entry.Debugln(args...)
+}
+
+// Infoln logs a message at level Info.
+func (l *Logger) Infoln(args ...any) {
+	l.entry.Infoln(args...)
+}
+
+// Warnln logs a message at level Warn.
+func (l *Logger) Warnln(args ...any) {
+	l.entry.Warnln(args...)
+}
+
+// Errorln logs a message at level Error.
+func (l *Logger) Errorln(args ...any) {
+	l.entry.Errorln(args...)
+}
+
+// Fatalln logs a message at level Fatal then the process will exit with status set to 1.
+func (l *Logger) Fatalln(args ...any) {
+	l.entry.Fatalln(args...)
+}
+
+// WithField adds a single field to the Logger.
+func (l *Logger) WithField(key string, value any) {
+	l.entry.Data[key] = value
 }
