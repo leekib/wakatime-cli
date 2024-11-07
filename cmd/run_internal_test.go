@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -8,13 +9,13 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
-	"runtime"
 	"testing"
 	"time"
 
 	cmdheartbeat "github.com/wakatime/wakatime-cli/cmd/heartbeat"
 	"github.com/wakatime/wakatime-cli/pkg/exitcode"
 	"github.com/wakatime/wakatime-cli/pkg/ini"
+	"github.com/wakatime/wakatime-cli/pkg/log"
 	"github.com/wakatime/wakatime-cli/pkg/version"
 
 	"github.com/spf13/viper"
@@ -25,7 +26,7 @@ import (
 func TestRunCmd(t *testing.T) {
 	v := viper.New()
 
-	err := runCmd(v, false, false, func(_ *viper.Viper) (int, error) {
+	err := runCmd(context.Background(), v, false, false, func(_ context.Context, _ *viper.Viper) (int, error) {
 		return exitcode.Success, nil
 	})
 
@@ -35,14 +36,13 @@ func TestRunCmd(t *testing.T) {
 func TestRunCmd_Err(t *testing.T) {
 	v := viper.New()
 
-	err := runCmd(v, false, false, func(_ *viper.Viper) (int, error) {
+	err := runCmd(context.Background(), v, false, false, func(_ context.Context, _ *viper.Viper) (int, error) {
 		return exitcode.ErrGeneric, errors.New("fail")
 	})
 
 	var errexitcode exitcode.Err
 
 	require.ErrorAs(t, err, &errexitcode)
-
 	assert.Equal(t, exitcode.ErrGeneric, err.(exitcode.Err).Code)
 }
 
@@ -99,7 +99,7 @@ func TestRunCmd_ErrOfflineEnqueue(t *testing.T) {
 	v.Set("key", "00000000-0000-4000-8000-000000000000")
 	v.Set("plugin", "vim")
 
-	err := runCmd(v, true, false, func(_ *viper.Viper) (int, error) {
+	err := runCmd(context.Background(), v, true, false, func(_ context.Context, _ *viper.Viper) (int, error) {
 		return exitcode.ErrGeneric, errors.New("fail")
 	})
 
@@ -111,10 +111,7 @@ func TestRunCmd_ErrOfflineEnqueue(t *testing.T) {
 }
 
 func TestRunCmd_BackoffLoggedWithVerbose(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip("Skipping because OS is windows.")
-	}
-
+	ctx := context.Background()
 	verbose := true
 
 	testServerURL, router, tearDown := setupTestServer()
@@ -155,16 +152,19 @@ func TestRunCmd_BackoffLoggedWithVerbose(t *testing.T) {
 	v.Set("internal.backoff_retries", "1")
 	v.Set("verbose", verbose)
 
-	_, _ = SetupLogging(v)
+	logger, err := SetupLogging(ctx, v)
+	require.NoError(t, err)
 
-	err = runCmd(v, verbose, false, cmdheartbeat.Run)
+	defer logger.Flush()
+
+	ctx = log.ToContext(ctx, logger)
+
+	err = runCmd(ctx, v, verbose, false, cmdheartbeat.Run)
 
 	var errexitcode exitcode.Err
 
 	require.ErrorAs(t, err, &errexitcode)
-
 	assert.Equal(t, exitcode.ErrBackoff, err.(exitcode.Err).Code)
-
 	assert.Equal(t, 0, numCalls)
 
 	output, err := io.ReadAll(logFile)
@@ -174,10 +174,7 @@ func TestRunCmd_BackoffLoggedWithVerbose(t *testing.T) {
 }
 
 func TestRunCmd_BackoffNotLogged(t *testing.T) {
-	if runtime.GOOS == "windows" {
-		t.Skip("Skipping because OS is windows.")
-	}
-
+	ctx := context.Background()
 	verbose := false
 
 	testServerURL, router, tearDown := setupTestServer()
@@ -218,9 +215,14 @@ func TestRunCmd_BackoffNotLogged(t *testing.T) {
 	v.Set("internal.backoff_retries", "1")
 	v.Set("verbose", verbose)
 
-	_, _ = SetupLogging(v)
+	logger, err := SetupLogging(ctx, v)
+	require.NoError(t, err)
 
-	err = runCmd(v, verbose, false, cmdheartbeat.Run)
+	defer logger.Flush()
+
+	ctx = log.ToContext(ctx, logger)
+
+	err = runCmd(ctx, v, verbose, false, cmdheartbeat.Run)
 
 	var errexitcode exitcode.Err
 
@@ -239,7 +241,7 @@ func TestParseConfigFiles(t *testing.T) {
 	v.Set("config", "testdata/.wakatime.cfg")
 	v.Set("internal-config", "testdata/.wakatime-internal.cfg")
 
-	err := parseConfigFiles(v)
+	err := parseConfigFiles(context.Background(), v)
 	require.NoError(t, err)
 
 	assert.Equal(t, "true", v.GetString("settings.debug"))
