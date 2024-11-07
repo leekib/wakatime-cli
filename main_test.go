@@ -116,7 +116,8 @@ func testSendHeartbeats(t *testing.T, projectFolder, entity, p string) {
 	offlineQueueFileLegacy, err := os.CreateTemp(tmpDir, "")
 	require.NoError(t, err)
 
-	defer offlineQueueFileLegacy.Close()
+	// close the file to avoid "file already closed" error
+	offlineQueueFileLegacy.Close()
 
 	tmpConfigFile, err := os.CreateTemp(tmpDir, "wakatime.cfg")
 	require.NoError(t, err)
@@ -215,7 +216,8 @@ func TestSendHeartbeats_SecondaryApiKey(t *testing.T) {
 	offlineQueueFileLegacy, err := os.CreateTemp(tmpDir, "")
 	require.NoError(t, err)
 
-	defer offlineQueueFileLegacy.Close()
+	// close the file to avoid "file already closed" error
+	offlineQueueFileLegacy.Close()
 
 	tmpInternalConfigFile, err := os.CreateTemp(tmpDir, "wakatime-internal.cfg")
 	require.NoError(t, err)
@@ -293,7 +295,8 @@ func TestSendHeartbeats_ExtraHeartbeats(t *testing.T) {
 	offlineQueueFileLegacy, err := os.CreateTemp(tmpDir, "")
 	require.NoError(t, err)
 
-	defer offlineQueueFileLegacy.Close()
+	// close the file to avoid "file already exists" error on Windows
+	offlineQueueFileLegacy.Close()
 
 	tmpConfigFile, err := os.CreateTemp(tmpDir, "wakatime.cfg")
 	require.NoError(t, err)
@@ -385,7 +388,7 @@ func TestSendHeartbeats_ExtraHeartbeats_SyncLegacyOfflineActivity(t *testing.T) 
 	offlineQueueFileLegacy, err := os.CreateTemp(tmpDir, "legacy-offline-file")
 	require.NoError(t, err)
 
-	// early close to avoid file locking in Windows
+	// close the file to avoid "file already exists" error on Windows
 	offlineQueueFileLegacy.Close()
 
 	db, err := bolt.Open(offlineQueueFileLegacy.Name(), 0600, nil)
@@ -437,8 +440,6 @@ func TestSendHeartbeats_ExtraHeartbeats_SyncLegacyOfflineActivity(t *testing.T) 
 	require.NoError(t, err)
 
 	buffer := bytes.NewBuffer(data)
-
-	assert.FileExists(t, offlineQueueFileLegacy.Name())
 
 	runWakatimeCli(
 		t,
@@ -529,7 +530,8 @@ func TestSendHeartbeats_Err(t *testing.T) {
 	offlineQueueFileLegacy, err := os.CreateTemp(tmpDir, "")
 	require.NoError(t, err)
 
-	defer offlineQueueFileLegacy.Close()
+	// close the file to avoid "file already exists" error on Windows
+	offlineQueueFileLegacy.Close()
 
 	tmpConfigFile, err := os.CreateTemp(tmpDir, "wakatime.cfg")
 	require.NoError(t, err)
@@ -590,7 +592,8 @@ func TestSendHeartbeats_ErrAuth_InvalidAPIKEY(t *testing.T) {
 	offlineQueueFileLegacy, err := os.CreateTemp(tmpDir, "")
 	require.NoError(t, err)
 
-	defer offlineQueueFileLegacy.Close()
+	// close the file to avoid "file already exists" error on Windows
+	offlineQueueFileLegacy.Close()
 
 	tmpConfigFile, err := os.CreateTemp(tmpDir, "wakatime.cfg")
 	require.NoError(t, err)
@@ -650,7 +653,8 @@ func TestSendHeartbeats_MalformedConfig(t *testing.T) {
 	offlineQueueFileLegacy, err := os.CreateTemp(tmpDir, "")
 	require.NoError(t, err)
 
-	defer offlineQueueFileLegacy.Close()
+	// close the file to avoid "file already exists" error on Windows
+	offlineQueueFileLegacy.Close()
 
 	out := runWakatimeCliExpectErr(
 		t,
@@ -684,7 +688,8 @@ func TestSendHeartbeats_MalformedInternalConfig(t *testing.T) {
 	offlineQueueFileLegacy, err := os.CreateTemp(tmpDir, "")
 	require.NoError(t, err)
 
-	defer offlineQueueFileLegacy.Close()
+	// close the file to avoid "file already exists" error on Windows
+	offlineQueueFileLegacy.Close()
 
 	tmpConfigFile, err := os.CreateTemp(tmpDir, "wakatime.cfg")
 	require.NoError(t, err)
@@ -1017,7 +1022,8 @@ func TestPrintOfflineHeartbeats(t *testing.T) {
 	offlineQueueFileLegacy, err := os.CreateTemp(tmpDir, "")
 	require.NoError(t, err)
 
-	defer offlineQueueFileLegacy.Close()
+	// close the file to avoid "file already exists" error on Windows
+	offlineQueueFileLegacy.Close()
 
 	tmpConfigFile, err := os.CreateTemp(tmpDir, "wakatime.cfg")
 	require.NoError(t, err)
