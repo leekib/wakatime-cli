@@ -125,6 +125,8 @@ func TestSendHeartbeats(t *testing.T) {
 	offlineQueueFile, err := os.CreateTemp(t.TempDir(), "")
 	require.NoError(t, err)
 
+	defer offlineQueueFile.Close()
+
 	err = cmdheartbeat.SendHeartbeats(context.Background(), v, offlineQueueFile.Name())
 	require.NoError(t, err)
 
@@ -150,11 +152,17 @@ func TestSendHeartbeats_RateLimited(t *testing.T) {
 	tmpFile, err := os.CreateTemp(t.TempDir(), "wakatime-config")
 	require.NoError(t, err)
 
+	defer tmpFile.Close()
+
 	tmpFileInternal, err := os.CreateTemp(t.TempDir(), "wakatime-internal-config")
 	require.NoError(t, err)
 
+	defer tmpFileInternal.Close()
+
 	offlineQueueFile, err := os.CreateTemp(t.TempDir(), "offline-queue-file")
 	require.NoError(t, err)
+
+	defer offlineQueueFile.Close()
 
 	v := viper.New()
 	v.SetDefault("sync-offline-activity", 1000)
@@ -215,6 +223,8 @@ func TestSendHeartbeats_WithFiltering_Exclude(t *testing.T) {
 
 	offlineQueueFile, err := os.CreateTemp(t.TempDir(), "")
 	require.NoError(t, err)
+
+	defer offlineQueueFile.Close()
 
 	err = cmdheartbeat.SendHeartbeats(context.Background(), v, offlineQueueFile.Name())
 	require.NoError(t, err)
