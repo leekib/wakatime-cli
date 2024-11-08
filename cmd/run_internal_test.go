@@ -135,7 +135,8 @@ func TestRunCmd_BackoffLoggedWithVerbose(t *testing.T) {
 	offlineQueueFile, err := os.CreateTemp(tmpDir, "")
 	require.NoError(t, err)
 
-	defer offlineQueueFile.Close()
+	// close to avoid "The process cannot access the file because it is being used by another process" error on Windows
+	offlineQueueFile.Close()
 
 	entity, err := os.CreateTemp(tmpDir, "")
 	require.NoError(t, err)
@@ -193,7 +194,8 @@ func TestRunCmd_BackoffNotLogged(t *testing.T) {
 	offlineQueueFile, err := os.CreateTemp(tmpDir, "")
 	require.NoError(t, err)
 
-	defer offlineQueueFile.Close()
+	// close to avoid "The process cannot access the file because it is being used by another process" error on Windows
+	offlineQueueFile.Close()
 
 	logFile, err := os.CreateTemp(tmpDir, "")
 	require.NoError(t, err)

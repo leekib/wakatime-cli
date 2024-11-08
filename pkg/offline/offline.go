@@ -437,9 +437,9 @@ func openDB(ctx context.Context, filepath string) (db *bolt.DB, _ func(), err er
 		return nil, nil, fmt.Errorf("failed to open db file: %s", err)
 	}
 
-	logger := log.Extract(ctx)
-
 	return db, func() {
+		logger := log.Extract(ctx)
+
 		// recover from panic when closing db
 		defer func() {
 			if r := recover(); r != nil {
