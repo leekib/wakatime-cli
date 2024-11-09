@@ -52,6 +52,8 @@ func TestSendHeartbeats(t *testing.T) {
 	tmpFile, err := os.CreateTemp(t.TempDir(), "wakatime-config")
 	require.NoError(t, err)
 
+	defer tmpFile.Close()
+
 	subfolders := project.CountSlashesInProjectFolder(projectFolder)
 
 	router.HandleFunc("/users/current/heartbeats.bulk", func(w http.ResponseWriter, req *http.Request) {
@@ -544,12 +546,12 @@ func TestSendHeartbeats_NonExistingEntity(t *testing.T) {
 
 	ctx = log.ToContext(ctx, logger)
 
-	f, err := os.CreateTemp(tmpDir, "")
+	offlineQueueFile, err := os.CreateTemp(tmpDir, "")
 	require.NoError(t, err)
 
-	defer f.Close()
+	defer offlineQueueFile.Close()
 
-	err = cmdheartbeat.SendHeartbeats(ctx, v, f.Name())
+	err = cmdheartbeat.SendHeartbeats(ctx, v, offlineQueueFile.Name())
 	require.NoError(t, err)
 
 	output, err := io.ReadAll(logFile)
@@ -1061,6 +1063,8 @@ func TestSendHeartbeats_ObfuscateProject(t *testing.T) {
 	offlineQueueFile, err := os.CreateTemp(t.TempDir(), "")
 	require.NoError(t, err)
 
+	defer offlineQueueFile.Close()
+
 	err = cmdheartbeat.SendHeartbeats(ctx, v, offlineQueueFile.Name())
 	require.NoError(t, err)
 
@@ -1149,6 +1153,8 @@ func TestSendHeartbeats_ObfuscateProjectNotBranch(t *testing.T) {
 
 	offlineQueueFile, err := os.CreateTemp(t.TempDir(), "")
 	require.NoError(t, err)
+
+	defer offlineQueueFile.Close()
 
 	err = cmdheartbeat.SendHeartbeats(ctx, v, offlineQueueFile.Name())
 	require.NoError(t, err)
