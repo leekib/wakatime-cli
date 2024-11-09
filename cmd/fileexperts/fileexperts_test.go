@@ -121,9 +121,6 @@ func TestFileExperts_NonExistingEntity(t *testing.T) {
 	_, err = fileexperts.FileExperts(ctx, v)
 	require.NoError(t, err)
 
-	err = logFile.Sync()
-	require.NoError(t, err)
-
 	output, err := io.ReadAll(logFile)
 	require.NoError(t, err)
 

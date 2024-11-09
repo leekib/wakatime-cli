@@ -116,7 +116,7 @@ func testSendHeartbeats(t *testing.T, projectFolder, entity, p string) {
 	offlineQueueFileLegacy, err := os.CreateTemp(tmpDir, "")
 	require.NoError(t, err)
 
-	// close the file to avoid "file already closed" error
+	// close the file to avoid "The process cannot access the file because it is being used by another process" error
 	offlineQueueFileLegacy.Close()
 
 	tmpConfigFile, err := os.CreateTemp(tmpDir, "wakatime.cfg")
@@ -216,7 +216,7 @@ func TestSendHeartbeats_SecondaryApiKey(t *testing.T) {
 	offlineQueueFileLegacy, err := os.CreateTemp(tmpDir, "")
 	require.NoError(t, err)
 
-	// close the file to avoid "file already closed" error
+	// close the file to avoid "The process cannot access the file because it is being used by another process" error
 	offlineQueueFileLegacy.Close()
 
 	tmpInternalConfigFile, err := os.CreateTemp(tmpDir, "wakatime-internal.cfg")
@@ -295,7 +295,7 @@ func TestSendHeartbeats_ExtraHeartbeats(t *testing.T) {
 	offlineQueueFileLegacy, err := os.CreateTemp(tmpDir, "")
 	require.NoError(t, err)
 
-	// close the file to avoid "file already exists" error on Windows
+	// close to avoid "The process cannot access the file because it is being used by another process" error on Windows
 	offlineQueueFileLegacy.Close()
 
 	tmpConfigFile, err := os.CreateTemp(tmpDir, "wakatime.cfg")
@@ -388,7 +388,7 @@ func TestSendHeartbeats_ExtraHeartbeats_SyncLegacyOfflineActivity(t *testing.T) 
 	offlineQueueFileLegacy, err := os.CreateTemp(tmpDir, "legacy-offline-file")
 	require.NoError(t, err)
 
-	// close the file to avoid "file already exists" error on Windows
+	// close to avoid "The process cannot access the file because it is being used by another process" error on Windows
 	offlineQueueFileLegacy.Close()
 
 	db, err := bolt.Open(offlineQueueFileLegacy.Name(), 0600, nil)
@@ -530,7 +530,7 @@ func TestSendHeartbeats_Err(t *testing.T) {
 	offlineQueueFileLegacy, err := os.CreateTemp(tmpDir, "")
 	require.NoError(t, err)
 
-	// close the file to avoid "file already exists" error on Windows
+	// close to avoid "The process cannot access the file because it is being used by another process" error on Windows
 	offlineQueueFileLegacy.Close()
 
 	tmpConfigFile, err := os.CreateTemp(tmpDir, "wakatime.cfg")
@@ -592,7 +592,7 @@ func TestSendHeartbeats_ErrAuth_InvalidAPIKEY(t *testing.T) {
 	offlineQueueFileLegacy, err := os.CreateTemp(tmpDir, "")
 	require.NoError(t, err)
 
-	// close the file to avoid "file already exists" error on Windows
+	// close to avoid "The process cannot access the file because it is being used by another process" error on Windows
 	offlineQueueFileLegacy.Close()
 
 	tmpConfigFile, err := os.CreateTemp(tmpDir, "wakatime.cfg")
@@ -653,7 +653,7 @@ func TestSendHeartbeats_MalformedConfig(t *testing.T) {
 	offlineQueueFileLegacy, err := os.CreateTemp(tmpDir, "")
 	require.NoError(t, err)
 
-	// close the file to avoid "file already exists" error on Windows
+	// close to avoid "The process cannot access the file because it is being used by another process" error on Windows
 	offlineQueueFileLegacy.Close()
 
 	out := runWakatimeCliExpectErr(
@@ -688,7 +688,7 @@ func TestSendHeartbeats_MalformedInternalConfig(t *testing.T) {
 	offlineQueueFileLegacy, err := os.CreateTemp(tmpDir, "")
 	require.NoError(t, err)
 
-	// close the file to avoid "file already exists" error on Windows
+	// close to avoid "The process cannot access the file because it is being used by another process" error on Windows
 	offlineQueueFileLegacy.Close()
 
 	tmpConfigFile, err := os.CreateTemp(tmpDir, "wakatime.cfg")
@@ -1022,7 +1022,7 @@ func TestPrintOfflineHeartbeats(t *testing.T) {
 	offlineQueueFileLegacy, err := os.CreateTemp(tmpDir, "")
 	require.NoError(t, err)
 
-	// close the file to avoid "file already exists" error on Windows
+	// close to avoid "The process cannot access the file because it is being used by another process" error on Windows
 	offlineQueueFileLegacy.Close()
 
 	tmpConfigFile, err := os.CreateTemp(tmpDir, "wakatime.cfg")

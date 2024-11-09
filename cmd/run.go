@@ -242,9 +242,7 @@ func SetupLogging(ctx context.Context, v *viper.Viper) (*log.Logger, error) {
 		return nil, fmt.Errorf("failed to load log params: %s", err)
 	}
 
-	logger := log.New(params.Verbose, params.SendDiagsOnErrors, params.Metrics)
-
-	logFile := os.Stdout
+	destOutput := os.Stdout
 
 	if !params.ToStdout {
 		dir := filepath.Dir(params.File)
@@ -255,16 +253,20 @@ func SetupLogging(ctx context.Context, v *viper.Viper) (*log.Logger, error) {
 			}
 		}
 
-		logFile, err = os.OpenFile(params.File, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644) // nolint:gosec
+		destOutput, err = os.OpenFile(params.File, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644) // nolint:gosec
 		if err != nil {
 			return nil, fmt.Errorf("error opening log file: %s", err)
 		}
-
-		logger.SetOutput(logFile)
 	}
 
-	logger.SetVerbose(params.Verbose)
-	log.SetJww(params.Verbose, logFile)
+	logger := log.New(
+		destOutput,
+		log.WithVerbose(params.Verbose),
+		log.WithSendDiagsOnErrors(params.SendDiagsOnErrors),
+		log.WithMetrics(params.Metrics),
+	)
+
+	log.SetJww(params.Verbose, destOutput)
 
 	return logger, nil
 }

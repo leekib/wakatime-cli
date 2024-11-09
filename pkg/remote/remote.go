@@ -111,7 +111,7 @@ func WithCleanup() heartbeat.HandleOption {
 
 			for _, h := range hh {
 				if h.LocalFileNeedsCleanup {
-					logger.Debugln("deleting temporary file:", h.LocalFile)
+					logger.Debugf("deleting temporary file: %s", h.LocalFile)
 
 					deleteLocalFile(ctx, h.LocalFile)
 				}
@@ -310,7 +310,7 @@ func (c Client) knownHostKeys(ctx context.Context) []ssh.PublicKey {
 
 			return nil
 		}(filename); err != nil {
-			logger.Debugln(err)
+			logger.Debugln(err.Error())
 		}
 	}
 

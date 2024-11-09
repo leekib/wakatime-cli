@@ -1,6 +1,9 @@
 package log
 
-import "context"
+import (
+	"context"
+	"os"
+)
 
 type (
 	ctxMarker struct{}
@@ -17,7 +20,9 @@ var ctxMarkerKey = &ctxMarker{}
 func Extract(ctx context.Context) *Logger {
 	l, ok := ctx.Value(ctxMarkerKey).(*ctxLogger)
 	if !ok || l == nil {
-		return New(false, false, false)
+		// TODO: It should never happen but if it does,
+		// we should find a way to create a new logger using passed params during initialization
+		return New(os.Stdout)
 	}
 
 	return l.logger
