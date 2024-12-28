@@ -76,6 +76,9 @@ func RunE(cmd *cobra.Command, v *viper.Viper) error {
 
 	// setup logging again to use config file settings if available
 	logger, err = SetupLogging(ctx, v)
+	// save logger back to the context
+	ctx = log.ToContext(ctx, logger)
+
 	if err != nil {
 		logger.Fatalf("failed to setup logging: %s", err)
 	}
