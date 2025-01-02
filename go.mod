@@ -17,7 +17,6 @@ require (
 	github.com/pkg/sftp v1.13.7
 	github.com/slongfield/pyfmt v0.0.0-20220222012616-ea85ff4c361f
 	github.com/spf13/cobra v1.8.1
-	github.com/spf13/jwalterweatherman v1.1.0
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.9.0
 	go.etcd.io/bbolt v1.3.11
