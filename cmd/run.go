@@ -269,8 +269,6 @@ func SetupLogging(ctx context.Context, v *viper.Viper) (*log.Logger, error) {
 		log.WithMetrics(params.Metrics),
 	)
 
-	log.SetJww(params.Verbose, destOutput)
-
 	return logger, nil
 }
 
